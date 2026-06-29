@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RJ Mobile — Review Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0F1F3D;
+      --blue:       #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-light: #EFF6FF;
+      --blue-mid:   #DBEAFE;
+      --surface:    #F0F4FA;
+      --white:      #ffffff;
+      --border:     #E2E8F0;
+      --muted:      #94A3B8;
+      --text:       #0F1F3D;
+      --text-soft:  #475569;
+      --green:      #10B981;
+    }
+
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--surface);
+      background-image: radial-gradient(ellipse 90% 40% at 50% -5%, rgba(37,99,235,0.09) 0%, transparent 70%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 52px 16px 64px;
+    }
+
+    .header { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; text-align: center; }
+    .brand  { display: flex; align-items: center; gap: 11px; }
+
+    .logo {
+      width: 46px; height: 46px;
+      background: var(--navy);
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(15,31,61,0.22);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .logo img  { width: 100%; height: 100%; object-fit: contain; }
+    .logo span { color: #fff; font-size: 15px; font-weight: 800; letter-spacing: -0.5px; }
+
+    .brand-text .name { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.6px; line-height: 1; }
+    .brand-text .tag  { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
+
+    .headline { font-size: clamp(26px, 5vw, 32px); font-weight: 800; color: var(--navy); letter-spacing: -0.8px; line-height: 1.15; }
+    .headline em { font-style: normal; color: var(--blue); }
+    .subline { font-size: 14.5px; color: var(--text-soft); line-height: 1.65; max-width: 360px; }
+
+    .card {
+      background: var(--white);
+      border-radius: 24px;
+      box-shadow: 0 1px 3px rgba(15,31,61,0.06), 0 8px 32px rgba(15,31,61,0.10);
+      width: 100%; max-width: 520px;
+      overflow: hidden;
+    }
+
+    .top-section { padding: 28px 28px 24px; border-bottom: 1px solid var(--border); }
+
+    .section-label {
+      font-size: 11.5px; font-weight: 600; color: var(--muted);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 12px; display: block;
+    }
+
+    .branches { display: flex; flex-direction: column; gap: 8px; }
+
+    .branch-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: var(--text-soft);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 16px;
+      text-align: left; cursor: pointer;
+      display: flex; align-items: center; gap: 12px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      width: 100%;
+    }
+    .branch-btn:hover    { background: var(--blue-light); border-color: rgba(37,99,235,0.28); color: var(--navy); }
+    .branch-btn.selected { background: var(--blue-light); border-color: var(--blue); color: var(--navy); font-weight: 600; }
+
+    .branch-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
+    .branch-btn.selected .branch-dot { background: var(--blue); }
+    .branch-name { flex: 1; }
+
+    .branch-check { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); display: none; align-items: center; justify-content: center; flex-shrink: 0; }
+    .branch-btn.selected .branch-check { display: flex; }
+
+    .gen-wrap { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+
+    .btn-generate {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: #fff; background: var(--blue);
+      border: none; border-radius: 14px;
+      padding: 14px 24px; width: 100%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      box-shadow: 0 1px 3px rgba(37,99,235,0.22), 0 4px 16px rgba(37,99,235,0.20);
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    }
+    .btn-generate:hover:not(:disabled) { background: var(--blue-hover); box-shadow: 0 2px 8px rgba(37,99,235,0.30), 0 8px 28px rgba(37,99,235,0.24); }
+    .btn-generate:active:not(:disabled) { transform: scale(0.98); }
+    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner { width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .is-loading .spinner  { display: block; }
+    .is-loading .btn-icon { display: none; }
+
+    .output-section { padding: 24px 28px; min-height: 180px; display: flex; flex-direction: column; gap: 18px; }
+
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); padding: 16px 0 8px; }
+    .empty-state svg { opacity: 0.35; }
+    .empty-state p { font-size: 13.5px; text-align: center; max-width: 240px; line-height: 1.6; }
+
+    .review-box {
+      background: var(--blue-light);
+      border: 1.5px solid rgba(37,99,235,0.14);
+      border-radius: 16px; padding: 20px 22px;
+      position: relative; display: none;
+    }
+    .review-box.visible { display: block; }
+    .review-box::before { content: '\201C'; position: absolute; top: -12px; left: 14px; font-size: 68px; font-weight: 800; color: rgba(37,99,235,0.12); line-height: 1; font-family: Georgia, serif; pointer-events: none; }
+
+    #review-text { font-size: 15px; font-weight: 400; font-style: italic; color: var(--text); line-height: 1.78; position: relative; z-index: 1; }
+
+    .cursor { display: inline-block; width: 2px; height: 1.05em; background: var(--blue); margin-left: 1px; vertical-align: text-bottom; border-radius: 1px; animation: blink 0.85s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .branch-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(37,99,235,0.08); color: var(--blue); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 12px; }
+
+    .action-row { display: none; gap: 10px; }
+    .action-row.visible { display: flex; }
+
+    .btn-action { font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; border-radius: 11px; padding: 11px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; justify-content: center; flex: 1; transition: background 0.14s, transform 0.1s; white-space: nowrap; }
+    .btn-action:active { transform: scale(0.97); }
+
+    .btn-copy { color: var(--blue); background: var(--blue-light); border: 1.5px solid rgba(37,99,235,0.20); }
+    .btn-copy:hover  { background: var(--blue-mid); }
+    .btn-copy.copied { color: var(--green); background: #F0FDF9; border-color: rgba(16,185,129,0.25); }
+
+    .btn-open { color: #fff; background: var(--navy); border: 1.5px solid transparent; }
+    .btn-open:hover { background: #1a3260; }
+
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--navy); color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border-radius: 100px; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; white-space: nowrap; z-index: 999; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .footer { margin-top: 22px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.7; }
+
+    @media (max-width: 480px) {
+      body { padding: 32px 12px 52px; }
+      .top-section, .gen-wrap, .output-section { padding-left: 18px; padding-right: 18px; }
+      .btn-action { font-size: 12.5px; padding: 10px 13px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="brand">
+      <div class="logo"><span>RJ</span></div>
+      <div class="brand-text">
+        <div class="name">RJ Mobile</div>
+        <div class="tag">Review Generator</div>
+      </div>
+    </div>
+    <h1 class="headline">Leave us a <em>review</em></h1>
+    <p class="subline">Select your branch, generate a review, then copy and post it in seconds.</p>
+  </header>
+
+  <div class="card">
+
+    <div class="top-section">
+      <span class="section-label">Choose your branch</span>
+      <div class="branches" id="branches">
+
+        <button class="branch-btn" data-branch="RJ Mobile – Branch 1" data-link="https://g.page/r/branch-1" onclick="selectBranch(this)">
+          <span class="branch-dot"></span>
+          <span class="branch-name">Branch 1</span>
+          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+
+        <button class="branch-btn" data-branch="RJ Mobile – Branch 2" data-link="https://g.page/r/branch-2" onclick="selectBranch(this)">
+          <span class="branch-dot"></span>
+          <span class="branch-name">Branch 2</span>
+          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+
+        <button class="branch-btn" data-branch="RJ Mobile – Branch 3" data-link="https://g.page/r/branch-3" onclick="selectBranch(this)">
+          <span class="branch-dot"></span>
+          <span class="branch-name">Branch 3</span>
+          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+
+        <button class="branch-btn" data-branch="RJ Mobile – Branch 4" data-link="https://g.page/r/branch-4" onclick="selectBranch(this)">
+          <span class="branch-dot"></span>
+          <span class="branch-name">Branch 4</span>
+          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+
+        <button class="branch-btn" data-branch="RJ Mobile – Branch 5" data-link="https://g.page/r/branch-5" onclick="selectBranch(this)">
+          <span class="branch-dot"></span>
+          <span class="branch-name">Branch 5</span>
+          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="gen-wrap">
+      <button class="btn-generate" id="gen-btn" onclick="generateReview()">
+        <svg class="btn-icon" width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2.5L12.5 7.5H17.5L13.75 11L15 16L10 13L5 16L6.25 11L2.5 7.5H7.5L10 2.5Z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
+        </svg>
+        <div class="spinner"></div>
+        <span id="btn-label">Generate Review</span>
+      </button>
+    </div>
+
+    <div class="output-section">
+
+      <div class="empty-state" id="empty-state">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect x="6" y="8" width="36" height="32" rx="6" stroke="#94A3B8" stroke-width="2"/>
+          <path d="M13 18h22M13 24h16M13 30h10" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p>Select a branch and tap Generate — your review will appear here.</p>
+      </div>
+
+      <div class="review-box" id="review-box">
+        <p id="review-text"></p>
+        <div class="branch-tag">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#2563EB" stroke-width="1.5"/><circle cx="6" cy="6" r="1.5" fill="#2563EB"/></svg>
+          <span id="branch-tag-text"></span>
+        </div>
+      </div>
+
+      <div class="action-row" id="action-row">
+        <button class="btn-action btn-copy" id="copy-btn" onclick="copyReview()">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+            <rect x="7" y="2" width="10" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M7 5H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span id="copy-label">Copy Text</span>
+        </button>
+
+        <button class="btn-action btn-open" onclick="openLink()">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+            <path d="M11 3h6v6M17 3l-8 8M9 5H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Open Review Page
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <p class="footer">Powered by AI · Feel free to personalise before posting</p>
+  <div id="toast"></div>
+
+  <script>
+    let selectedBranchName = '';
+    let selectedBranchLink = '';
+    let generatedText      = '';
+    let isLoading          = false;
+    let callCount          = 0; // tracks how many reviews have been generated this session
+
+    // Large variation pools — pick independently each call so combos are essentially infinite
+    const OPENERS = [
+      'Start with how quickly the repair was completed',
+      'Start with walking into the shop for the first time',
+      'Start with how worried you were about your broken phone',
+      'Start with a friend recommending this shop to you',
+      'Start with how surprised you were by the price',
+      'Start by mentioning you had tried other shops before',
+      'Start with the moment you got your phone back working',
+      'Start with how the staff greeted you at the door',
+      'Start with searching online for a repair shop and finding this one',
+      'Start with describing the specific problem your phone had',
+      'Start with having an urgent need to get your phone fixed the same day',
+      'Start with being sceptical at first but then being impressed',
+    ];
+    const FOCUSES = [
+      'focus on how fast and efficient the service was',
+      'focus on the honesty and fair pricing',
+      'focus on how friendly and approachable the staff were',
+      'focus on the quality and durability of the repair',
+      'focus on how knowledgeable the technician was',
+      'focus on feeling like your phone was in safe hands',
+      'focus on how professional and tidy the shop was',
+      'focus on the reassurance of a warranty on the repair',
+      'focus on feeling relieved your data was safe',
+      'focus on being impressed compared to other repair shops',
+      'focus on how clearly everything was explained to you',
+      'focus on how the staff went above and beyond',
+    ];
+    const ENDINGS = [
+      'End by saying you would come back without hesitation',
+      'End with a strong recommendation to friends and family',
+      'End by saying this is now your go-to phone repair shop',
+      'End with a mention of leaving a review being well deserved',
+      'End by saying you wish you had found them sooner',
+      'End by noting you have already told someone else about this shop',
+      'End with a simple but genuine thank-you to the team',
+    ];
+    const LENGTHS = ['2 sentences', '3 sentences', '4 sentences'];
+    const TONES   = [
+      'warm and genuinely grateful',
+      'casual and conversational, like texting a friend',
+      'straightforward and matter-of-fact',
+      'quietly enthusiastic',
+      'calm and measured but clearly positive',
+      'slightly surprised and impressed',
+    ];
+    const PERSPECTIVES = [
+      'You are a busy professional who depends on your phone for work.',
+      'You are a parent whose child cracked their phone screen.',
+      'You are a student on a tight budget.',
+      'You are someone who is not very tech-savvy.',
+      'You are a regular customer who has visited more than once.',
+      'You are someone who was passing by and decided to pop in.',
+    ];
+
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    function selectBranch(el) {
+      document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBranchName = el.dataset.branch;
+      selectedBranchLink = el.dataset.link;
+    }
+
+    async function generateReview() {
+      if (isLoading) return;
+      if (!selectedBranchName) { showToast('Please select a branch first'); return; }
+
+      isLoading = true;
+      callCount++;
+      setLoading(true);
+      clearOutput();
+
+      // Pick fresh random variables on every single call
+      const opener      = pick(OPENERS);
+      const focus       = pick(FOCUSES);
+      const ending      = pick(ENDINGS);
+      const length      = pick(LENGTHS);
+      const tone        = pick(TONES);
+      const perspective = pick(PERSPECTIVES);
+      const nonce       = Math.random().toString(36).slice(2, 10); // random string to break caching
+
+      const userPrompt = `[Request #${callCount} | nonce:${nonce}]
+
+Write a unique 5-star Google review for "${selectedBranchName}", a mobile phone repair and accessories shop in the UK.
+
+Perspective: ${perspective}
+Opening instruction: ${opener}
+Main focus: ${focus}
+Closing instruction: ${ending}
+Length: exactly ${length}
+Tone: ${tone}
+
+Hard rules:
+- Sound like a real human customer, not marketing copy
+- Do NOT start the review with the word "I"
+- No hashtags, no emojis, no quotation marks
+- No filler phrases like "I highly recommend" or "five stars" — show it, don't say it
+- Output ONLY the review text, nothing else`;
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 300,
+            system: 'You are a review-writing assistant. Every single response must be completely different from all previous ones — different opening word, different sentence structure, different angle, different vocabulary. Never repeat a pattern. Output only the review text with no explanation, preamble, or punctuation outside the review itself.',
+            messages: [{ role: 'user', content: userPrompt }],
+          }),
+        });
+
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
+        generatedText = text;
+        await showReview(text);
+
+      } catch (e) {
+        showToast('Something went wrong — please try again.');
+        document.getElementById('empty-state').style.display = 'flex';
+      } finally {
+        isLoading = false;
+        setLoading(false);
+        document.getElementById('btn-label').textContent = 'Regenerate Review';
+      }
+    }
+
+    async function showReview(text) {
+      document.getElementById('empty-state').style.display = 'none';
+      document.getElementById('branch-tag-text').textContent = selectedBranchName.replace('RJ Mobile – ', '');
+
+      const box    = document.getElementById('review-box');
+      const textEl = document.getElementById('review-text');
+      box.classList.add('visible');
+      textEl.innerHTML = '';
+
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      textEl.appendChild(cursor);
+
+      for (let i = 0; i < text.length; i++) {
+        textEl.insertBefore(document.createTextNode(text[i]), cursor);
+        await wait(text[i] === '.' || text[i] === ',' ? 30 : 13);
+      }
+      cursor.remove();
+
+      document.getElementById('action-row').classList.add('visible');
+    }
+
+    // Robust copy with clipboard API + execCommand fallback
+    function copyReview() {
+      if (!generatedText) return;
+
+      const doSuccess = () => {
+        const btn   = document.getElementById('copy-btn');
+        const label = document.getElementById('copy-label');
+        btn.classList.add('copied');
+        label.textContent = '✓ Copied!';
+        showToast('Copied to clipboard');
+        setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy Text'; }, 2500);
+      };
+
+      // Modern async clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(generatedText).then(doSuccess).catch(() => fallbackCopy(doSuccess));
+      } else {
+        fallbackCopy(doSuccess);
+      }
+    }
+
+    function fallbackCopy(onSuccess) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = generatedText;
+        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) onSuccess();
+        else showToast('Copy failed — please copy manually');
+      } catch (e) {
+        showToast('Copy failed — please copy manually');
+      }
+    }
+
+    function openLink() {
+      if (!selectedBranchLink) { showToast('Select a branch first'); return; }
+      window.open(selectedBranchLink, '_blank', 'noopener,noreferrer');
+    }
+
+    function clearOutput() {
+      document.getElementById('review-box').classList.remove('visible');
+      document.getElementById('review-text').innerHTML = '';
+      document.getElementById('action-row').classList.remove('visible');
+      document.getElementById('empty-state').style.display = 'none';
+    }
+
+    function setLoading(on) {
+      const btn = document.getElementById('gen-btn');
+      btn.disabled = on;
+      btn.classList.toggle('is-loading', on);
+      if (on) document.getElementById('btn-label').textContent = 'Generating…';
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+  </script>
+
+</body>
+</html>
