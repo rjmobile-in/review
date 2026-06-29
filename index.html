@@ -7,12 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --navy:       #1E2D4A;
       --blue:       #3B82F6;
       --blue-hover: #60A5FA;
       --blue-light: #1a2744;
@@ -25,144 +22,88 @@
       --text-soft:  #9BAAC4;
       --green:      #34D399;
     }
-
     html { -webkit-font-smoothing: antialiased; }
-
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--surface);
       background-image: radial-gradient(ellipse 90% 40% at 50% -5%, rgba(59,130,246,0.12) 0%, transparent 70%);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       padding: 52px 16px 64px;
     }
-
     .header { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; text-align: center; }
     .brand  { display: flex; align-items: center; gap: 11px; }
-
     .logo {
-      width: 46px; height: 46px;
-      background: #3B82F6;
-      border-radius: 13px;
+      width: 46px; height: 46px; background: #3B82F6; border-radius: 13px;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 16px rgba(59,130,246,0.4);
-      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 2px 16px rgba(59,130,246,0.4); overflow: hidden; flex-shrink: 0;
     }
     .logo img  { width: 100%; height: 100%; object-fit: contain; }
     .logo span { color: #fff; font-size: 15px; font-weight: 800; letter-spacing: -0.5px; }
-
     .brand-text .name { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.6px; line-height: 1; }
     .brand-text .tag  { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
-
     .headline { font-size: clamp(26px, 5vw, 32px); font-weight: 800; color: var(--text); letter-spacing: -0.8px; line-height: 1.15; }
     .headline em { font-style: normal; color: var(--blue); }
     .subline { font-size: 14.5px; color: var(--text-soft); line-height: 1.65; max-width: 360px; }
-
     .card {
-      background: var(--white);
-      border-radius: 24px;
+      background: var(--white); border-radius: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.4);
-      width: 100%; max-width: 520px;
-      overflow: hidden;
+      width: 100%; max-width: 520px; overflow: hidden;
     }
-
     .top-section { padding: 28px 28px 24px; border-bottom: 1px solid var(--border); }
-
-    .section-label {
-      font-size: 11.5px; font-weight: 600; color: var(--muted);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 12px; display: block;
-    }
-
+    .section-label { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block; }
     .branches { display: flex; flex-direction: column; gap: 8px; }
-
     .branch-btn {
-      font-family: 'Inter', sans-serif;
-      font-size: 14px; font-weight: 500;
-      color: var(--text-soft);
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 13px 16px;
-      text-align: left; cursor: pointer;
-      display: flex; align-items: center; gap: 12px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      width: 100%;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--text-soft); background: var(--surface);
+      border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px;
+      text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s; width: 100%;
     }
     .branch-btn:hover    { background: var(--blue-light); border-color: rgba(59,130,246,0.4); color: var(--text); }
     .branch-btn.selected { background: var(--blue-light); border-color: var(--blue); color: var(--text); font-weight: 600; }
-
     .branch-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
     .branch-btn.selected .branch-dot { background: var(--blue); }
     .branch-name { flex: 1; }
-
     .branch-check { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); display: none; align-items: center; justify-content: center; flex-shrink: 0; }
     .branch-btn.selected .branch-check { display: flex; }
-
     .gen-wrap { padding: 20px 28px; border-bottom: 1px solid var(--border); }
-
     .btn-generate {
-      font-family: 'Inter', sans-serif;
-      font-size: 15px; font-weight: 700;
-      color: #fff; background: var(--blue);
-      border: none; border-radius: 14px;
-      padding: 14px 24px; width: 100%;
-      cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: #fff; background: var(--blue); border: none; border-radius: 14px;
+      padding: 14px 24px; width: 100%; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 9px;
       box-shadow: 0 1px 3px rgba(59,130,246,0.3), 0 4px 16px rgba(59,130,246,0.25);
       transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
     }
-    .btn-generate:hover:not(:disabled) { background: var(--blue-hover); box-shadow: 0 2px 8px rgba(59,130,246,0.4), 0 8px 28px rgba(59,130,246,0.3); }
-    .btn-generate:active:not(:disabled) { transform: scale(0.98); }
-    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    .spinner { width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; flex-shrink: 0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .is-loading .spinner  { display: block; }
-    .is-loading .btn-icon { display: none; }
-
+    .btn-generate:hover { background: var(--blue-hover); box-shadow: 0 2px 8px rgba(59,130,246,0.4), 0 8px 28px rgba(59,130,246,0.3); }
+    .btn-generate:active { transform: scale(0.98); }
     .output-section { padding: 24px 28px; min-height: 180px; display: flex; flex-direction: column; gap: 18px; }
-
     .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); padding: 16px 0 8px; }
     .empty-state svg { opacity: 0.35; }
     .empty-state p { font-size: 13.5px; text-align: center; max-width: 240px; line-height: 1.6; }
-
     .review-box {
-      background: var(--blue-light);
-      border: 1.5px solid rgba(37,99,235,0.14);
-      border-radius: 16px; padding: 20px 22px;
-      position: relative; display: none;
+      background: var(--blue-light); border: 1.5px solid rgba(59,130,246,0.14);
+      border-radius: 16px; padding: 20px 22px; position: relative; display: none;
     }
     .review-box.visible { display: block; }
     .review-box::before { content: '\201C'; position: absolute; top: -12px; left: 14px; font-size: 68px; font-weight: 800; color: rgba(59,130,246,0.2); line-height: 1; font-family: Georgia, serif; pointer-events: none; }
-
     #review-text { font-size: 15px; font-weight: 400; font-style: italic; color: var(--text); line-height: 1.78; position: relative; z-index: 1; }
-
     .cursor { display: inline-block; width: 2px; height: 1.05em; background: var(--blue); margin-left: 1px; vertical-align: text-bottom; border-radius: 1px; animation: blink 0.85s step-end infinite; }
     @keyframes blink { 50% { opacity: 0; } }
-
     .branch-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(59,130,246,0.15); color: var(--blue-hover); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 12px; }
-
     .action-row { display: none; gap: 10px; }
     .action-row.visible { display: flex; }
-
     .btn-action { font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; border-radius: 11px; padding: 11px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; justify-content: center; flex: 1; transition: background 0.14s, transform 0.1s; white-space: nowrap; }
     .btn-action:active { transform: scale(0.97); }
-
     .btn-copy { color: var(--blue-hover); background: var(--blue-light); border: 1.5px solid rgba(59,130,246,0.25); }
     .btn-copy:hover  { background: var(--blue-mid); }
     .btn-copy.copied { color: var(--green); background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); }
-
     .btn-open { color: #fff; background: #2A3A5C; border: 1.5px solid rgba(255,255,255,0.08); }
     .btn-open:hover { background: #354870; }
-
     #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: #3B82F6; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border-radius: 100px; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; white-space: nowrap; z-index: 999; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
     .footer { margin-top: 22px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.7; }
-
     @media (max-width: 480px) {
       body { padding: 32px 12px 52px; }
       .top-section, .gen-wrap, .output-section { padding-left: 18px; padding-right: 18px; }
@@ -170,72 +111,56 @@
     }
   </style>
 </head>
-
 <body>
-
   <header class="header">
     <div class="brand">
-      <div class="logo"><img src="logo.png" /></div>
+      <div class="logo"><span>RJ</span></div>
       <div class="brand-text">
         <div class="name">RJ Mobile</div>
         <div class="tag">Review Generator</div>
       </div>
     </div>
     <h1 class="headline">Leave us a <em>review</em></h1>
-    <p class="subline">Select your branch, generate a review, then copy and post it in seconds.</p>
+    <p class="subline">Select your branch, pick a review, then copy and post it in seconds.</p>
   </header>
 
   <div class="card">
-
     <div class="top-section">
       <span class="section-label">Choose your branch</span>
       <div class="branches" id="branches">
-
         <button class="branch-btn" data-branch="RJ Mobile – Murlipura, 2 Number" data-link="https://g.page/r/branch-1" onclick="selectBranch(this)">
-          <span class="branch-dot"></span>
-          <span class="branch-name">Murlipura, 2 Number</span>
+          <span class="branch-dot"></span><span class="branch-name">Murlipura, 2 Number</span>
           <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
-
         <button class="branch-btn" data-branch="RJ Mobile – VKI, 17 Number" data-link="https://g.page/r/branch-2" onclick="selectBranch(this)">
-          <span class="branch-dot"></span>
-          <span class="branch-name">VKI, 17 Number</span>
+          <span class="branch-dot"></span><span class="branch-name">VKI, 17 Number</span>
           <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
-
         <button class="branch-btn" data-branch="RJ Mobile – Shastri Nagar" data-link="https://g.page/r/branch-3" onclick="selectBranch(this)">
-          <span class="branch-dot"></span>
-          <span class="branch-name">Shastri Nagar</span>
+          <span class="branch-dot"></span><span class="branch-name">Shastri Nagar</span>
           <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
-
         <button class="branch-btn" data-branch="RJ Mobile – VKI, Lohamandi" data-link="https://g.page/r/branch-4" onclick="selectBranch(this)">
-          <span class="branch-dot"></span>
-          <span class="branch-name">VKI, Lohamandi</span>
+          <span class="branch-dot"></span><span class="branch-name">VKI, Lohamandi</span>
           <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
-
         <button class="branch-btn" data-branch="RJ Mobile – Murlipura, 6 Number" data-link="https://g.page/r/branch-5" onclick="selectBranch(this)">
-          <span class="branch-dot"></span>
-          <span class="branch-name">Murlipura, 6 Number</span>
+          <span class="branch-dot"></span><span class="branch-name">Murlipura, 6 Number</span>
           <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
-
       </div>
     </div>
 
     <div class="gen-wrap">
       <button class="btn-generate" id="gen-btn" onclick="generateReview()">
-        <svg class="btn-icon" width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
           <path d="M10 2.5L12.5 7.5H17.5L13.75 11L15 16L10 13L5 16L6.25 11L2.5 7.5H7.5L10 2.5Z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
         </svg>
-        <div class="spinner"></div>
         <span id="btn-label">Generate Review</span>
       </button>
     </div>
 
     <div class="output-section">
-
       <div class="empty-state" id="empty-state">
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
           <rect x="6" y="8" width="36" height="32" rx="6" stroke="#94A3B8" stroke-width="2"/>
@@ -243,15 +168,13 @@
         </svg>
         <p>Select a branch and tap Generate — your review will appear here.</p>
       </div>
-
       <div class="review-box" id="review-box">
         <p id="review-text"></p>
         <div class="branch-tag">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#2563EB" stroke-width="1.5"/><circle cx="6" cy="6" r="1.5" fill="#2563EB"/></svg>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#3B82F6" stroke-width="1.5"/><circle cx="6" cy="6" r="1.5" fill="#3B82F6"/></svg>
           <span id="branch-tag-text"></span>
         </div>
       </div>
-
       <div class="action-row" id="action-row">
         <button class="btn-action btn-copy" id="copy-btn" onclick="copyReview()">
           <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
@@ -260,7 +183,6 @@
           </svg>
           <span id="copy-label">Copy Text</span>
         </button>
-
         <button class="btn-action btn-open" onclick="openLink()">
           <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
             <path d="M11 3h6v6M17 3l-8 8M9 5H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
@@ -268,78 +190,70 @@
           Open Review Page
         </button>
       </div>
-
     </div>
-
   </div>
 
-  <p class="footer">Powered by AI · Feel free to personalise before posting</p>
+  <p class="footer">Feel free to personalise before posting</p>
   <div id="toast"></div>
 
   <script>
+    const REVIEWS = [
+      "Brought my cracked phone here after a friend suggested it and honestly couldn't be happier. Screen was replaced quickly, price was fair, and the phone looks brand new. Will definitely come back.",
+      "Fixed my charging port in under 30 minutes. The staff explained exactly what was wrong without making me feel clueless. Refreshing to find a repair shop you can actually trust.",
+      "My phone had water damage and I thought it was gone for good. The team managed to recover it completely. Genuinely impressed with the level of skill here.",
+      "Walked in without an appointment and was seen straight away. Battery replaced, phone working perfectly. The whole thing took less time than I expected.",
+      "Been going to RJ Mobile for all my phone repairs for the past two years. Never once let me down. The consistency of good service keeps me coming back.",
+      "Screen repair was done neatly and the touch works perfectly now. No bubbles, no dead spots. You can tell the technicians actually take pride in their work.",
+      "Came in panicking about a smashed screen before an important meeting. They sorted it out fast and didn't overcharge. That kind of service is hard to find.",
+      "Tried two other shops before coming here. RJ Mobile fixed the issue the others couldn't diagnose. Should have come straight here from the start.",
+      "The staff were patient in explaining what the repair involved and how much it would cost before doing anything. No surprises on the bill, which I really appreciated.",
+      "Phone wouldn't turn on and I assumed the worst. Left it with them, came back an hour later and it was fully working. Prices are very reasonable for the quality of work.",
+      "Dropped my phone down the stairs and completely shattered the screen. RJ Mobile had it looking perfect by the end of the day. Very pleased with the result.",
+      "Excellent service from start to finish. The technician was honest about what was repairable and what wasn't. That kind of transparency is rare and worth a lot.",
+      "Had my speaker replaced here and the difference is night and day. Clear sound, no crackling, works as good as new. Quick turnaround too.",
+      "Mother's phone needed a new battery and screen. Both were done the same day at a price that was lower than expected. She's very happy and so am I.",
+      "The shop is clean, organised, and the staff actually listen to what you're saying. Felt like my phone was in good hands the whole time.",
+      "Back glass was replaced perfectly — you genuinely cannot tell it was ever damaged. The attention to detail here is impressive.",
+      "Phone was running incredibly slow and the battery was draining in two hours. After the service here it runs like it did when I first bought it. Really happy.",
+      "Came in with a phone that had a broken headphone jack. Fixed quickly and tested in front of me before I left. That extra check made all the difference.",
+      "RJ Mobile repaired my son's phone after he dropped it in water. We'd given up hope but they brought it back to life. Cannot thank them enough.",
+      "Very fair pricing compared to other shops in the area. The repair was done properly the first time, which is what matters most.",
+      "Cracked screen and a broken home button sorted in one visit. Didn't have to leave the phone overnight either. Great experience overall.",
+      "The staff here don't try to upsell you on things you don't need. Got exactly the repair I came in for at a price that was completely reasonable.",
+      "Phone was repaired while I waited, which was really convenient. Staff were friendly and professional throughout. Would recommend to anyone.",
+      "Had a software issue that was making the phone crash constantly. They diagnosed it correctly and fixed it without needing to do a factory reset. Saved all my data.",
+      "Quick, efficient, and honest. Those three things are all you need from a repair shop and RJ Mobile delivers on all of them.",
+      "Brought in a phone with a badly damaged screen and got it back in better condition than I expected. The repair was clean and the price was fair.",
+      "The technician showed me exactly what he was doing during the repair. That kind of openness made me feel confident I was getting good service.",
+      "USB port was loose and the phone kept disconnecting from chargers. Fixed in no time and working perfectly now. Small issue, handled professionally.",
+      "My phone had been running hot and the battery swelling slightly. The team handled it safely and replaced the battery quickly. Very reassuring.",
+      "Came in for a screen replacement and the staff noticed another issue while fixing it and pointed it out without charging extra. Really appreciated that honesty.",
+      "Phone screen had lines running through it after a fall. RJ Mobile replaced it the same day and it looks and feels exactly like the original. Brilliant work.",
+      "The front camera was blurry and autofocus had stopped working. All fixed now, photos are sharp again. Really glad I found this place.",
+      "Brought my old phone in thinking it was done for. They repaired it and it works better than it has in years. Saved me from having to buy a new one.",
+      "Service was fast and the staff were genuinely friendly, not just polite. Felt like they actually cared about getting the repair right.",
+      "Screen, battery, and back glass all replaced in a single visit. Everything works perfectly and the phone looks brand new. Couldn't ask for more.",
+      "Phone had taken a hard knock and the display was showing coloured lines. Repaired quickly and looks perfect now. Reasonable price for the work done.",
+      "The whole process from dropping the phone off to picking it up was smooth and hassle-free. That kind of easy experience is something you remember.",
+      "My phone mic had stopped working so calls were impossible. Fixed here without any fuss and works flawlessly now. Very happy with the service.",
+      "Repair was done to a high standard and the staff made sure I was satisfied before I left. That final check shows they actually care about the result.",
+      "Came recommended by a colleague and completely understand why. Fast service, fair prices, and the repair was done right the first time.",
+      "The volume buttons had stopped responding after a drop. Repaired cleanly and working properly again. Small fix handled with real care.",
+      "Bought a screen protector and phone case here as well as getting a repair done. Good quality accessories at sensible prices. One-stop shop.",
+      "Very impressed with how quickly the repair was completed without cutting any corners. The phone has been working perfectly ever since.",
+      "Dropped my phone getting out of the car and cracked it badly. RJ Mobile had it sorted the same afternoon. Excellent, reliable service.",
+      "The staff member who handled my repair was clearly experienced and took care with every step. You can see the difference that skill makes in the finished result.",
+      "My phone wouldn't charge at all. Turns out the port was blocked with dust. Cleaned out and working perfectly — and they didn't charge much for it either.",
+      "Repair was done neatly with no gaps or misalignment in the screen. Everything sits flush just like it should. That kind of quality finish is what sets this place apart.",
+      "Been putting off getting my phone fixed for weeks. Wish I had come sooner. Quick, affordable, and done properly. No reason to go anywhere else.",
+      "The team here fixed an issue that a bigger chain store told me was unfixable. Grateful for the expertise and the honest, straightforward service.",
+      "Left my phone feeling confident the repair was done well, and a week later it is still working perfectly. That lasting quality is what earns a five-star review."
+    ];
+
     let selectedBranchName = '';
     let selectedBranchLink = '';
     let generatedText      = '';
-    let isLoading          = false;
-    let callCount          = 0; // tracks how many reviews have been generated this session
-
-    // Large variation pools — pick independently each call so combos are essentially infinite
-    const OPENERS = [
-      'Start with how quickly the repair was completed',
-      'Start with walking into the shop for the first time',
-      'Start with how worried you were about your broken phone',
-      'Start with a friend recommending this shop to you',
-      'Start with how surprised you were by the price',
-      'Start by mentioning you had tried other shops before',
-      'Start with the moment you got your phone back working',
-      'Start with how the staff greeted you at the door',
-      'Start with searching online for a repair shop and finding this one',
-      'Start with describing the specific problem your phone had',
-      'Start with having an urgent need to get your phone fixed the same day',
-      'Start with being sceptical at first but then being impressed',
-    ];
-    const FOCUSES = [
-      'focus on how fast and efficient the service was',
-      'focus on the honesty and fair pricing',
-      'focus on how friendly and approachable the staff were',
-      'focus on the quality and durability of the repair',
-      'focus on how knowledgeable the technician was',
-      'focus on feeling like your phone was in safe hands',
-      'focus on how professional and tidy the shop was',
-      'focus on the reassurance of a warranty on the repair',
-      'focus on feeling relieved your data was safe',
-      'focus on being impressed compared to other repair shops',
-      'focus on how clearly everything was explained to you',
-      'focus on how the staff went above and beyond',
-    ];
-    const ENDINGS = [
-      'End by saying you would come back without hesitation',
-      'End with a strong recommendation to friends and family',
-      'End by saying this is now your go-to phone repair shop',
-      'End with a mention of leaving a review being well deserved',
-      'End by saying you wish you had found them sooner',
-      'End by noting you have already told someone else about this shop',
-      'End with a simple but genuine thank-you to the team',
-    ];
-    const LENGTHS = ['2 sentences', '3 sentences', '4 sentences'];
-    const TONES   = [
-      'warm and genuinely grateful',
-      'casual and conversational, like texting a friend',
-      'straightforward and matter-of-fact',
-      'quietly enthusiastic',
-      'calm and measured but clearly positive',
-      'slightly surprised and impressed',
-    ];
-    const PERSPECTIVES = [
-      'You are a busy professional who depends on your phone for work.',
-      'You are a parent whose child cracked their phone screen.',
-      'You are a student on a tight budget.',
-      'You are someone who is not very tech-savvy.',
-      'You are a regular customer who has visited more than once.',
-      'You are someone who was passing by and decided to pop in.',
-    ];
-
-    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    let lastIndex          = -1;
 
     function selectBranch(el) {
       document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('selected'));
@@ -348,96 +262,42 @@
       selectedBranchLink = el.dataset.link;
     }
 
+    function pickReview() {
+      let idx;
+      do { idx = Math.floor(Math.random() * REVIEWS.length); } while (idx === lastIndex);
+      lastIndex = idx;
+      return REVIEWS[idx];
+    }
+
     async function generateReview() {
-      if (isLoading) return;
       if (!selectedBranchName) { showToast('Please select a branch first'); return; }
-
-      isLoading = true;
-      callCount++;
-      setLoading(true);
       clearOutput();
-
-      // Pick fresh random variables on every single call
-      const opener      = pick(OPENERS);
-      const focus       = pick(FOCUSES);
-      const ending      = pick(ENDINGS);
-      const length      = pick(LENGTHS);
-      const tone        = pick(TONES);
-      const perspective = pick(PERSPECTIVES);
-      const nonce       = Math.random().toString(36).slice(2, 10); // random string to break caching
-
-      const userPrompt = `[Request #${callCount} | nonce:${nonce}]
-
-Write a unique 5-star Google review for "${selectedBranchName}", a mobile phone repair and accessories shop in the UK.
-
-Perspective: ${perspective}
-Opening instruction: ${opener}
-Main focus: ${focus}
-Closing instruction: ${ending}
-Length: exactly ${length}
-Tone: ${tone}
-
-Hard rules:
-- Sound like a real human customer, not marketing copy
-- Do NOT start the review with the word "I"
-- No hashtags, no emojis, no quotation marks
-- No filler phrases like "I highly recommend" or "five stars" — show it, don't say it
-- Output ONLY the review text, nothing else`;
-
-      try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 300,
-            system: 'You are a review-writing assistant. Every single response must be completely different from all previous ones — different opening word, different sentence structure, different angle, different vocabulary. Never repeat a pattern. Output only the review text with no explanation, preamble, or punctuation outside the review itself.',
-            messages: [{ role: 'user', content: userPrompt }],
-          }),
-        });
-
-        if (!res.ok) throw new Error(res.status);
-        const data = await res.json();
-        const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
-        generatedText = text;
-        await showReview(text);
-
-      } catch (e) {
-        showToast('Something went wrong — please try again.');
-        document.getElementById('empty-state').style.display = 'flex';
-      } finally {
-        isLoading = false;
-        setLoading(false);
-        document.getElementById('btn-label').textContent = 'Regenerate Review';
-      }
+      const text = pickReview();
+      generatedText = text;
+      await showReview(text);
+      document.getElementById('btn-label').textContent = 'Regenerate Review';
     }
 
     async function showReview(text) {
       document.getElementById('empty-state').style.display = 'none';
       document.getElementById('branch-tag-text').textContent = selectedBranchName.replace('RJ Mobile – ', '');
-
       const box    = document.getElementById('review-box');
       const textEl = document.getElementById('review-text');
       box.classList.add('visible');
       textEl.innerHTML = '';
-
       const cursor = document.createElement('span');
       cursor.className = 'cursor';
       textEl.appendChild(cursor);
-
       for (let i = 0; i < text.length; i++) {
         textEl.insertBefore(document.createTextNode(text[i]), cursor);
-        await wait(text[i] === '.' || text[i] === ',' ? 30 : 13);
+        await wait(text[i] === '.' || text[i] === ',' ? 28 : 12);
       }
       cursor.remove();
-
       document.getElementById('action-row').classList.add('visible');
     }
 
-    // Robust copy with clipboard API + execCommand fallback
     function copyReview() {
       if (!generatedText) return;
-
       const doSuccess = () => {
         const btn   = document.getElementById('copy-btn');
         const label = document.getElementById('copy-label');
@@ -446,13 +306,9 @@ Hard rules:
         showToast('Copied to clipboard');
         setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy Text'; }, 2500);
       };
-
-      // Modern async clipboard API
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(generatedText).then(doSuccess).catch(() => fallbackCopy(doSuccess));
-      } else {
-        fallbackCopy(doSuccess);
-      }
+      } else { fallbackCopy(doSuccess); }
     }
 
     function fallbackCopy(onSuccess) {
@@ -461,15 +317,11 @@ Hard rules:
         ta.value = generatedText;
         ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
         document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
+        ta.focus(); ta.select();
         const ok = document.execCommand('copy');
         document.body.removeChild(ta);
-        if (ok) onSuccess();
-        else showToast('Copy failed — please copy manually');
-      } catch (e) {
-        showToast('Copy failed — please copy manually');
-      }
+        if (ok) onSuccess(); else showToast('Copy failed — please copy manually');
+      } catch (e) { showToast('Copy failed — please copy manually'); }
     }
 
     function openLink() {
@@ -484,24 +336,15 @@ Hard rules:
       document.getElementById('empty-state').style.display = 'none';
     }
 
-    function setLoading(on) {
-      const btn = document.getElementById('gen-btn');
-      btn.disabled = on;
-      btn.classList.toggle('is-loading', on);
-      if (on) document.getElementById('btn-label').textContent = 'Generating…';
-    }
-
     let toastTimer;
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
+      t.textContent = msg; t.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
     }
 
     function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
   </script>
-
 </body>
 </html>
