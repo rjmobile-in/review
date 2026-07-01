@@ -68,8 +68,23 @@
     .branch-info .branch-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
     .branch-info .branch-name  { font-size: 15px; font-weight: 700; color: var(--text); margin-top: 2px; }
 
-    /* ── Action button ── */
+    /* ── Action button & Lang Toggle ── */
     .gen-wrap { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    
+    .lang-toggle {
+      display: flex; background: var(--surface); border-radius: 10px;
+      padding: 4px; margin-bottom: 16px; border: 1px solid var(--border);
+    }
+    .lang-btn {
+      flex: 1; background: transparent; border: none; color: var(--text-soft);
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      padding: 8px 0; border-radius: 7px; cursor: pointer; transition: all 0.2s;
+    }
+    .lang-btn.active {
+      background: var(--blue-light); color: var(--blue-hover);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2); border: 1px solid rgba(59,130,246,0.2);
+    }
+
     .btn-action-main {
       font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
       color: #fff; background: var(--blue); border: none; border-radius: 14px;
@@ -92,6 +107,14 @@
     .btn-steps .step { display: flex; align-items: center; gap: 5px; }
     .step-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); }
     .step-sep { color: rgba(255,255,255,0.25); font-size: 10px; }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      font-size: 11.5px; color: var(--text-soft); text-align: center;
+      margin-top: 14px; line-height: 1.5; display: flex; align-items: flex-start;
+      justify-content: center; gap: 6px; padding: 0 10px;
+    }
+    .disclaimer svg { flex-shrink: 0; margin-top: 1.5px; opacity: 0.8; }
 
     /* ── Output ── */
     .output-section { padding: 24px 28px; min-height: 160px; display: flex; flex-direction: column; gap: 18px; }
@@ -159,18 +182,35 @@
     </div>
 
     <div class="gen-wrap">
+      
+      <div class="lang-toggle">
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+        <button class="lang-btn active" onclick="setLang('hinglish')" id="btn-hinglish">Hinglish / Local</button>
+        <button class="lang-btn" onclick="setLang('hi')" id="btn-hi">Hindi</button>
+      </div>
+
       <button class="btn-action-main" id="main-btn" onclick="doEverything()">
         <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
           <path d="M10 2.5L12.5 7.5H17.5L13.75 11L15 16L10 13L5 16L6.25 11L2.5 7.5H7.5L10 2.5Z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
         </svg>
         <span id="btn-label">Copy Review &amp; Open Page</span>
       </button>
+      
       <div class="btn-steps">
         <span class="step"><span class="step-dot"></span> Copies text</span>
         <span class="step-sep">·</span>
         <span class="step"><span class="step-dot"></span> Downloads 5 photos</span>
         <span class="step-sep">·</span>
         <span class="step"><span class="step-dot"></span> Opens page</span>
+      </div>
+
+      <div class="disclaimer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span><strong>Note:</strong> Please tap "Allow" if your browser asks for permission to download photos or open the review page.</span>
       </div>
     </div>
 
@@ -211,64 +251,398 @@
     const BRANCH_LINK = "https://search.google.com/local/writereview?placeid=ChIJ47_zeYezbTkRcmkoZWMfX_E";
     const TOTAL_POOL_IMAGES = 50; 
     const IMAGES_TO_DOWNLOAD = 5; 
+    
+    let currentLang = 'hinglish'; // Default selected language
 
-    // Dynamic Review Generator Arrays (10 x 10 x 10 x 5 = 5,000 unique reviews)
-    const intros = [
-      "RJ Mobile has an ultra-luxurious showroom setup.",
-      "The showroom layout is pristine, modern, elegant, and luxurious.",
-      "Walking inside feels like stepping into a modern luxury store.",
-      "They have the most stunning and luxurious outlet in town.",
-      "The environment here is deeply premium, stylish, and comfortable.",
-      "A completely magnificent, luxury store layout that instantly catches your eye.",
-      "The showroom presentation is incredibly high-end and polished.",
-      "It offers an unforgettable elite showroom shopping experience.",
-      "RJ Mobile feels like a high-end luxury tech store lounge.",
-      "The showroom is ultra-luxurious and beautifully designed."
-    ];
+    // ── Review Data Dictionary ──
+    const reviewsData = {
+      
+      // 1. ENGLISH (Formal & Premium)
+      en: {
+        intros: [
+          "RJ Mobile has an ultra-luxurious showroom setup.",
+          "The showroom layout is pristine, modern, elegant, and luxurious.",
+          "Walking inside feels like stepping into a modern luxury store.",
+          "They have the most stunning and luxurious outlet in town.",
+          "The environment here is deeply premium, stylish, and comfortable.",
+          "A completely magnificent, luxury store layout that instantly catches your eye.",
+          "The showroom presentation is incredibly high-end and polished.",
+          "It offers an unforgettable elite showroom shopping experience.",
+          "RJ Mobile feels like a high-end luxury tech store lounge.",
+          "The showroom is ultra-luxurious and beautifully designed.",
+          "I was blown away by the sophisticated and clean interior of this mobile store.",
+          "This place redefines what a premium smartphone shopping experience should look like.",
+          "The visual appeal and modern aesthetics of RJ Mobile are truly unmatched.",
+          "An exceptionally well-organized and gorgeous multi-brand showroom.",
+          "The ambiance here screams luxury, making gadget shopping a total delight.",
+          "From the lighting to the displays, everything here feels wonderfully exclusive.",
+          "Stepping into RJ Mobile is a treat for anyone who loves high-end retail spaces.",
+          "This showroom sets a new benchmark for elegance in the mobile retail space.",
+          "The upscale vibe of the store makes it a fantastic place to explore new tech.",
+          "RJ Mobile boasts an immaculate, grand, and highly inviting storefront."
+        ],
+        middles: [
+          "The customer support staff showed wonderful, polite behavior.",
+          "I am very impressed with their soft-spoken and professional behavior.",
+          "The entire sales team has remarkably polite and welcoming behavior.",
+          "The employees treat you with respect and very humble behavior.",
+          "The staff behavior is highly cooperative, patient, and friendly.",
+          "They handled everything with disciplined and customer-centric behavior.",
+          "Excellent treatment and noble behavior from everyone on the floor.",
+          "Their staff's cooperative behavior made my transaction completely smooth.",
+          "The team behaves exceptionally well and handles queries perfectly.",
+          "The store executives have incredibly kind and gentle behavior.",
+          "The representatives were highly knowledgeable and guided me with great patience.",
+          "I genuinely appreciated how courteous and helpful the floor managers were.",
+          "Every question I had was answered with a smile and deep technical expertise.",
+          "The team's dedication to assisting customers without rushing them is fantastic.",
+          "They maintain a highly respectful and cordial attitude towards every visitor.",
+          "I loved the personalized attention and warm hospitality provided by the staff.",
+          "The employees here go above and beyond, showcasing truly exemplary service.",
+          "Their attentive and transparent approach builds immediate trust.",
+          "The salespersons are incredibly humble, soft-spoken, and eager to help.",
+          "Customer care here is top-notch, characterized by sincere and friendly interactions."
+        ],
+        pricing: [
+          "They offer the most competitive pricing in the entire market.",
+          "I found their deals and discounts to be incredibly genuine.",
+          "The exchange value they provided for my old phone was outstanding.",
+          "You get true value for every single penny spent here.",
+          "Their transparent billing process leaves no room for hidden charges.",
+          "I compared prices online, and their in-store offers easily beat them.",
+          "They helped me find a device perfectly tailored to my budget.",
+          "The financing and EMI options they provide are super convenient.",
+          "Their seasonal discounts made the upgrade totally worth it.",
+          "They have exceptional bundle offers that save you a lot of money.",
+          "The pricing is incredibly fair and absolutely unmatched locally.",
+          "They prioritize customer savings over making a quick profit.",
+          "I got a massive discount without having to bargain at all.",
+          "Their price-match guarantee gave me complete peace of mind.",
+          "Affordability meets luxury in every single deal they pitch.",
+          "They explained the cost breakdown clearly, showing great integrity.",
+          "The festive offers running at the store were a huge money-saver.",
+          "It is rare to find such high-end service at these budget-friendly rates.",
+          "The overall monetary value of my purchase was simply fantastic.",
+          "They genuinely offer the best smartphone deals in the city."
+        ],
+        endings: [
+          "They even surprise you with premium free gifts at checkout.",
+          "Walking out with lovely free gifts made the purchase even sweeter.",
+          "Plus, I received an amazing free gift along with my new smartphone.",
+          "They didn't hold back and gave me highly useful free accessories as gifts.",
+          "They offer genuine and high-quality free gifts on major upgrades.",
+          "Got a fantastic complimentary gift that adds immense value.",
+          "The unexpected high-value free gifts were a wonderful bonus.",
+          "They treat every buyer to delightful premium free gifts.",
+          "They handed over beautiful free gifts with full transparency.",
+          "The complementary free gifts they distribute are top tier.",
+          "I was absolutely thrilled by the unexpected bonus accessories they included for free.",
+          "They genuinely care about their customers, proven by the awesome freebies they provide.",
+          "Getting such a generous complimentary gift combo was the highlight of my visit.",
+          "The added free gifts I received are actually branded and very high quality.",
+          "It's rare to find a store that gives away such premium free gifts with a smile.",
+          "They totally won me over with the spectacular free goodies bundled with my phone.",
+          "The checkout experience was made perfect by the gorgeous free gifts they handed me.",
+          "I deeply appreciated the extra free accessories they threw in without me even asking.",
+          "The promotional free gifts they provide are incredibly practical and stylish.",
+          "Walking away with my new device and superb free gifts made my day entirely."
+        ],
+        bonuses: [
+          "Highly recommended destination!",
+          "A perfect five-star mobile showroom.",
+          "Definitely my go-to mobile shop from now on.",
+          "Simply superb customer journey.",
+          "A class apart from other multi-brand stores.",
+          "I wouldn't think of going anywhere else for tech.",
+          "An absolute 10/10 shopping experience.",
+          "I will certainly be bringing my friends and family here.",
+          "The best place in town to buy a new smartphone.",
+          "Truly a flawless and premium retail experience.",
+          "Kudos to the entire management team.",
+          "I'm leaving a very happy and satisfied customer.",
+          "Exceeded all my expectations beautifully.",
+          "A brilliant place that deserves all the praise.",
+          "I strongly urge everyone to visit this amazing store.",
+          "I will absolutely return for my next gadget purchase.",
+          "A truly phenomenal standard of customer satisfaction.",
+          "This showroom is a gem for all mobile phone buyers.",
+          "Couldn't have asked for a better purchasing experience.",
+          "100% satisfied and highly impressed with everything."
+        ]
+      },
 
-    const middles = [
-      "The customer support staff showed wonderful, polite behavior.",
-      "I am very impressed with their soft-spoken and professional behavior.",
-      "The entire sales team has remarkably polite and welcoming behavior.",
-      "The employees treat you with respect and very humble behavior.",
-      "The staff behavior is highly cooperative, patient, and friendly.",
-      "They handled everything with disciplined and customer-centric behavior.",
-      "Excellent treatment and noble behavior from everyone on the floor.",
-      "Their staff's cooperative behavior made my transaction completely smooth.",
-      "The team behaves exceptionally well and handles queries perfectly.",
-      "The store executives have incredibly kind and gentle behavior."
-    ];
+      // 2. HINGLISH + JAIPURI/MARWARI SLANG (Authentic Local Flavor)
+      hinglish: {
+        intros: [
+          "RJ Mobile ka showroom ek number hai.",
+          "Dukan ka interior bahut hi premium aur shandar hai.",
+          "Jaipur ki sabse best luxury mobile shop.",
+          "Andar ghuste hi ekdam VIP wali feeling aati hai.",
+          "Store ka setup ghana chokho aur modern hai.",
+          "Dekhne mein showroom bahut hi jabardast hai.",
+          "RJ Mobile ki display aur lighting zordar hai.",
+          "Bahut hi saaf-suthra aur bada showroom hai.",
+          "Murlipura area ki sabse top class mobile dukan.",
+          "Ekdam badiya aur luxurious mobile store.",
+          "Yahan ka mahol bahut hi shanti wala aur premium hai.",
+          "RJ Mobile visit karke maza aa gaya.",
+          "Store ki vibe ekdam mast aur welcoming hai.",
+          "Bhaiya logon ne showroom ko kya mast saja rakha hai.",
+          "Ghani shandar mobile shop hai apni.",
+          "Mobile lene ke liye is se badhiya jagah nahi hai.",
+          "Premium phones ka sabse best collection yahan hai.",
+          "Showroom itna bada hai ki har brand mil jayega.",
+          "Display itni clear aur badiya hai ki dil khush ho jaye.",
+          "RJ Mobile ka look kisi bade mall ke store jaisa hai."
+        ],
+        middles: [
+          "Staff ka nature bahut hi badhiya aur polite hai.",
+          "Yahan ke bhaiya log bahut respect se baat karte hain.",
+          "Customer service ekdam zordar hai.",
+          "Bhaiya ne phone ke baare mein sab kuch achhe se samjhaya.",
+          "Staff bahut cooperative aur helpful hai.",
+          "Koi jaldbazi nahi karte, aaram se phone dikhate hain.",
+          "Inka bartaav bahut hi shanti aur tameez wala hai.",
+          "Bhaiya ka behaviour itna achha tha ki maza aa gaya.",
+          "Staff ko saare phones ki poori knowledge hai.",
+          "Grahak ko bhagwan ki tarah treat karte hain yahan.",
+          "Sabhi log bahut friendly aur ache se pesh aaye.",
+          "Service aisi ki dil khush ho gaya, ghana chokho staff.",
+          "Sales team ka tareeka bahut hi professional hai.",
+          "Mera data transfer waghera sab aaram se kar diya.",
+          "Har sawal ka jawab bahut hi pyar se diya.",
+          "Dukan par sabhi ka nature ek number hai.",
+          "Staff ne bilkul sahi aur sachi salah di.",
+          "Mujhe phone select karne mein bahut help ki.",
+          "Unka soft-spoken nature mujhe sabse acha laga.",
+          "Ekdam ghar jaisa feel karwaya staff ne."
+        ],
+        pricing: [
+          "Bazaar se sabse badhiya rate yahan mila.",
+          "Prices ekdam reasonable aur saste hain.",
+          "Purane phone ka exchange rate bahut shandar lagaya.",
+          "Jo rate inhone diya, wo pure Jaipur mein koi nahi dega.",
+          "Billing mein bilkul transparency hai, koi hidden charge nahi.",
+          "Online se bhi sasta phone pad gaya mujhe yahan.",
+          "Budget ke hisaab se sabse best phone dila diya.",
+          "Inke EMI options bahut aasan aur fast hain.",
+          "Discount itna badhiya diya ki dil khush ho gaya.",
+          "Paison ke mamle mein bahut hi fair aur genuine shop hai.",
+          "Sahi daam mein badhiya cheez milti hai yahan.",
+          "Festive offer ke chalte kafi bachat ho gayi meri.",
+          "Bina bargaining ke hi best price de diya bhaiya ne.",
+          "Paise poore vasool ho gaye yahan se phone leke.",
+          "Deals aur offers hamesha zordar rehte hain inke.",
+          "Rate bilkul fix aur market se down rehte hain.",
+          "Exchange offer ka fayda mujhe bahut badiya mila.",
+          "Saste daam mein premium phone lene ka best adda.",
+          "Inhone price match karke mujhe fully satisfy kar diya.",
+          "Zada munafa nahi kamate, customer ka fayda dekhte hain."
+        ],
+        endings: [
+          "Sath mein mast free gifts bhi diye bhaiya ne.",
+          "Phone ke sath cover aur glass free mila.",
+          "Checkout ke time bahut badhiya complimentary gifts mile.",
+          "Inhone bina mange hi premium accessories gift kar di.",
+          "Gifts dekh kar tabiyat khush ho gayi.",
+          "Ek shandar smart watch free di mere naye phone par.",
+          "Gift mein jo earphones mile wo bahut badiya quality ke hain.",
+          "Gifts dene mein bhaiya log bilkul kanjoosi nahi karte.",
+          "Saath mein itne saare surprises mile ki maza aa gaya.",
+          "Free accessories ke maamle mein RJ Mobile sabse aage hai.",
+          "Unexpected gifts milne se din ban gaya aaj.",
+          "Inke freebies ki quality local nahi, ekdam branded hoti hai.",
+          "Premium phone ke sath premium gift, ghana chokho kaam.",
+          "Customer ko khush karke hi bhejte hain dukan se.",
+          "Sath mein mila hua gift combo bahut useful hai.",
+          "Gifts ka wada karte hain aur poora bhi karte hain.",
+          "Phone lene ki khushi dugni ho gayi itne mast gifts ke sath.",
+          "Free cover, temper aur ear-buds dekar pura package bana diya.",
+          "Ise kehte hain asali customer delight, thanks for the gifts.",
+          "Aise zabardast free gifts maine kisi aur dukan par nahi dekhe."
+        ],
+        bonuses: [
+          "100% recommended dukan hai mere bhaiyon.",
+          "Ek bar zaroor visit karein, maza aayega.",
+          "Jaipur ki sabse number 1 mobile shop.",
+          "Main ab hamesha yahin se phone lunga.",
+          "Mere saare doston ko yahi jagah recommend karunga.",
+          "Ekdam 5 star wali feeling aur service.",
+          "Zordar experience, jarur aaiye.",
+          "Aisi dukan pure Murlipura mein nahi milegi.",
+          "Sabse chokho kaam hai inka, highly recommended.",
+          "Dil khush ho gaya, sabko yahi aana chahiye.",
+          "Agar phone lena hai to sirf RJ Mobile se lein.",
+          "Paise poore vasool aur dil 100% mutmain.",
+          "Bahut hi shandar anubhav raha mera yahan.",
+          "Gajab ki service aur gajab ka store.",
+          "Main toh fully satisfied hoke ja raha hu.",
+          "Best place to buy any brand smartphone.",
+          "Mera review: 10/10, ek number kaam.",
+          "Aage se family ke saare phones yahi se aayenge.",
+          "Highly satisfied, thanks RJ Mobile team.",
+          "Is store ka koi mukabla nahi hai city mein."
+        ]
+      },
 
-    const endings = [
-      "They even surprise you with premium free gifts at checkout.",
-      "Walking out with lovely free gifts made the purchase even sweeter.",
-      "Plus, I received an amazing free gift along with my new smartphone.",
-      "They didn't hold back and gave me highly useful free accessories as gifts.",
-      "They offer genuine and high-quality free gifts on major upgrades.",
-      "Got a fantastic complimentary gift that adds immense value.",
-      "The unexpected high-value free gifts were a wonderful bonus.",
-      "They treat every buyer to delightful premium free gifts.",
-      "They handed over beautiful free gifts with full transparency.",
-      "The complementary free gifts they distribute are top tier."
-    ];
+      // 3. PURE HINDI (Devanagari)
+      hi: {
+        intros: [
+          "RJ Mobile का शोरूम बहुत ही शानदार और लक्ज़री है।",
+          "दुकान का इंटीरियर बहुत ही प्रीमियम और आधुनिक है।",
+          "अंदर जाते ही किसी बड़े वीआईपी स्टोर जैसी फीलिंग आती है।",
+          "यह जयपुर की सबसे बेहतरीन और लग्जरी मोबाइल शॉप है।",
+          "शोरूम की सजावट और सफाई देखकर मन खुश हो गया।",
+          "इनका शोरूम बहुत ही आकर्षक और शानदार ढंग से बनाया गया है।",
+          "RJ Mobile में शॉपिंग का अनुभव बहुत ही खास रहता है।",
+          "यह दुकान बहुत ही साफ-सुथरी और बड़ी है।",
+          "मुरलीपुरा क्षेत्र की यह सबसे बढ़िया मोबाइल शॉप है।",
+          "शोरूम की लाइटिंग और डिस्प्ले एकदम प्रीमियम हैं।",
+          "यहाँ का माहौल बहुत ही शांत और आरामदायक है।",
+          "RJ Mobile में आकर मुझे बहुत अच्छा लगा।",
+          "इस स्टोर की सुंदरता और व्यवस्था काबिले तारीफ है।",
+          "स्मार्टफोन खरीदने के लिए यह जगह एकदम परफेक्ट है।",
+          "यहाँ प्रीमियम फोंस का सबसे शानदार कलेक्शन मौजूद है।",
+          "स्टोर इतना बड़ा है कि आपको यहाँ हर ब्रांड आसानी से मिल जाएगा।",
+          "दुकान की डिस्प्ले इतनी बेहतरीन है कि देखते ही दिल खुश हो जाए।",
+          "इस शोरूम का लुक किसी बड़े मॉल के शोरूम जैसा है।",
+          "यहाँ ग्राहकों के लिए बहुत ही अच्छी सुविधाएँ उपलब्ध हैं।",
+          "यह एक पूरी तरह से मॉडर्न और लक्ज़री मोबाइल स्टोर है।"
+        ],
+        middles: [
+          "स्टाफ का व्यवहार बहुत ही शालीन और मददगार है।",
+          "यहाँ काम करने वाले सभी लोग बहुत ही विनम्र हैं।",
+          "मुझे फोन के बारे में बहुत अच्छे से जानकारी दी गई।",
+          "ग्राहक सेवा के मामले में यह दुकान सबसे आगे है।",
+          "यहाँ के कर्मचारी ग्राहकों की बात बहुत धैर्य से सुनते हैं।",
+          "सेल्स टीम का तरीका बहुत ही पेशेवर और अच्छा है।",
+          "उन्होंने बिना किसी जल्दबाजी के मुझे सभी फोन दिखाए।",
+          "यहाँ का स्टाफ ग्राहकों का बहुत सम्मान करता है।",
+          "सभी कर्मचारियों का व्यवहार बहुत ही दोस्ताना और सहयोगात्मक है।",
+          "स्टाफ को सभी आधुनिक फोंस की बहुत गहरी जानकारी है।",
+          "उन्होंने मेरे सभी सवालों के बहुत अच्छे से जवाब दिए।",
+          "मेरा पुराना डेटा ट्रांसफर करने में उन्होंने बहुत मदद की।",
+          "यहाँ ग्राहकों को भगवान की तरह माना जाता है।",
+          "स्टाफ की सर्विस इतनी अच्छी थी कि मेरा दिल खुश हो गया।",
+          "उन्होंने मुझे बिल्कुल सही और सच्ची सलाह दी।",
+          "सही फोन चुनने में उन्होंने मेरी बहुत मदद की।",
+          "कर्मचारियों का मीठा स्वभाव मुझे सबसे अच्छा लगा।",
+          "उन्होंने मुझे एकदम घर जैसा आरामदायक महसूस कराया।",
+          "यहाँ काम करने वालों का अनुशासन बहुत ही शानदार है।",
+          "कस्टमर केयर के नजरिए से यह जगह बेहतरीन है।"
+        ],
+        pricing: [
+          "मुझे मार्केट में सबसे अच्छा रेट और डील यहीं मिली।",
+          "दाम बिल्कुल उचित हैं और कोई हिडन चार्ज नहीं है।",
+          "पुराने फोन की एक्सचेंज वैल्यू बहुत ही शानदार लगाई गई।",
+          "ऑनलाइन से भी सस्ते रेट पर मुझे नया फोन मिल गया।",
+          "मेरे बजट के हिसाब से उन्होंने मुझे सबसे बेहतरीन फोन दिया।",
+          "इनके फाइनेंस और ईएमआई (EMI) के ऑप्शंस बहुत आसान हैं।",
+          "डिस्काउंट इतना अच्छा दिया कि मेरी काफी बचत हो गई।",
+          "पैसों के मामले में यह बहुत ही सच्ची और ईमानदार दुकान है।",
+          "यहाँ आपको अपनी कीमत का पूरा मूल्य (Value for money) मिलता है।",
+          "त्योहारों के ऑफर के कारण मुझे यहाँ से फोन लेना बहुत फायदेमंद रहा।",
+          "बिना मोलभाव किए ही उन्होंने मुझे बेस्ट प्राइस दे दिया।",
+          "इस दुकान के रेट हमेशा मार्केट से कम ही होते हैं।",
+          "एक्सचेंज ऑफर का मुझे यहाँ बहुत बड़ा फायदा मिला।",
+          "कम दाम में प्रीमियम फोन लेने की यह सबसे अच्छी जगह है।",
+          "इन्होंने प्राइस मैच करके मुझे पूरी तरह संतुष्ट कर दिया।",
+          "यह लोग ज्यादा मुनाफा नहीं कमाते, बल्कि ग्राहक का फायदा देखते हैं।",
+          "इनकी बिलिंग प्रक्रिया पूरी तरह से पारदर्शी है।",
+          "बंडल ऑफर के तहत मुझे बहुत सारे पैसे बचाने का मौका मिला।",
+          "ईमानदारी से कहूँ तो पूरे जयपुर में ऐसा रेट कोई नहीं दे सकता।",
+          "सही दाम और बेहतरीन सर्विस का यह एक बेजोड़ संगम है।"
+        ],
+        endings: [
+          "बिलिंग के समय मुझे शानदार फ्री गिफ्ट्स भी दिए गए।",
+          "फोन के साथ कवर और टेम्पर्ड ग्लास एकदम फ्री मिला।",
+          "इन्होंने मुझे बहुत ही अच्छी क्वालिटी के प्रीमियम गिफ्ट दिए।",
+          "मुफ्त उपहार पाकर मेरी खुशी दोगुनी हो गई।",
+          "मेरे नए स्मार्टफोन के साथ मुझे एक शानदार स्मार्टवॉच फ्री मिली।",
+          "गिफ्ट में मिले इयरफोन्स की क्वालिटी बहुत ही बेहतरीन है।",
+          "फ्री गिफ्ट्स देने में इस दुकान वाले बिल्कुल भी कंजूसी नहीं करते।",
+          "चेकआउट के समय इतने सारे सरप्राइज मिले कि मज़ा आ गया।",
+          "फ्री एक्सेसरीज के मामले में RJ Mobile सबसे आगे है।",
+          "अचानक से मिले इन तोहफों ने मेरा दिन बना दिया।",
+          "इनकी तरफ से दिए जाने वाले गिफ्ट्स बिल्कुल ब्रांडेड होते हैं।",
+          "प्रीमियम फोन के साथ प्रीमियम उपहार पाकर दिल खुश हो गया।",
+          "ये अपने ग्राहकों को खुश करके ही दुकान से विदा करते हैं।",
+          "मुफ्त में मिली एक्सेसरीज मेरे बहुत काम आ रही हैं।",
+          "ये वादे के पक्के हैं और शानदार गिफ्ट देते हैं।",
+          "इतने अच्छे गिफ्ट्स के साथ नया फोन लेने का अलग ही मज़ा है।",
+          "फ्री कवर, टेम्पर्ड ग्लास और इयर-बड्स देकर इन्होंने पूरा पैकेज बना दिया।",
+          "इसे कहते हैं असली ग्राहक संतुष्टि, इन शानदार गिफ्ट्स के लिए धन्यवाद।",
+          "ऐसे ज़बरदस्त और महंगे फ्री गिफ्ट्स मैंने किसी और दुकान पर नहीं देखे।",
+          "बिना मेरे मांगे ही इन्होंने इतने उपयोगी गिफ्ट्स मेरे बैग में डाल दिए।"
+        ],
+        bonuses: [
+          "मैं सभी को यहाँ आने की सलाह दूँगा।",
+          "मेरे अनुभव से यह एक 5-स्टार दुकान है।",
+          "भविष्य में मैं हमेशा यहीं से फोन खरीदूंगा।",
+          "पूरे शहर में इससे अच्छी कोई मोबाइल शॉप नहीं है।",
+          "मैं अपने सभी दोस्तों और रिश्तेदारों को यहीं भेजूंगा।",
+          "यहाँ से फोन खरीदकर मुझे 100% संतुष्टि मिली है।",
+          "यह जयपुर की नंबर 1 मोबाइल दुकान है।",
+          "मेरा अनुभव बहुत ही शानदार रहा, आप भी जरूर आएँ।",
+          "मुरलीपुरा इलाके में इस दुकान का कोई मुकाबला नहीं है।",
+          "इनका काम बहुत ही बेहतरीन है, हाईली रिकमेंडेड।",
+          "दिल खुश हो गया, हर किसी को यहीं से शॉपिंग करनी चाहिए।",
+          "अगर आप नया फोन लेना चाहते हैं तो सिर्फ RJ Mobile पर आएँ।",
+          "पैसे पूरे वसूल हो गए और मैं पूरी तरह संतुष्ट हूँ।",
+          "बहुत ही गज़ब की सर्विस और गज़ब का स्टोर।",
+          "मैं यहाँ से एक बहुत ही खुश ग्राहक बनकर जा रहा हूँ।",
+          "स्मार्टफोन खरीदने के लिए यह सबसे उत्तम स्थान है।",
+          "मेरा रिव्यु है: 10/10, एकदम बढ़िया काम।",
+          "आगे से मेरे परिवार के सभी फोंस यहीं से आएँगे।",
+          "धन्यवाद RJ Mobile टीम, मैं आपकी सर्विस से बहुत खुश हूँ।",
+          "सर्विस और क्वालिटी के मामले में यह दुकान सबसे श्रेष्ठ है।"
+        ]
+      }
+    };
 
-    const bonuses = [
-      "Highly recommended destination!",
-      "A perfect five-star mobile showroom.",
-      "Definitely my go-to mobile shop from now on.",
-      "Simply superb customer journey.",
-      "A class apart from other multi-brand stores."
-    ];
-
-    function pickReview() {
-      const intro = intros[Math.floor(Math.random() * intros.length)];
-      const middle = middles[Math.floor(Math.random() * middles.length)];
-      const ending = endings[Math.floor(Math.random() * endings.length)];
-      const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
-      return `${intro} ${middle} ${ending} ${bonus}`;
+    function setLang(lang) {
+      currentLang = lang;
+      // UI Update
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + lang).classList.add('active');
     }
 
-    // Selects a random subset of photos from img1.png to img50.png
+    function pickReview() {
+      const data = reviewsData[currentLang];
+      
+      // 1. Pick the guaranteed outer bookends
+      const intro = data.intros[Math.floor(Math.random() * data.intros.length)];
+      const bonus = data.bonuses[Math.floor(Math.random() * data.bonuses.length)];
+      
+      // 2. Pick the core middle elements
+      const middle = data.middles[Math.floor(Math.random() * data.middles.length)]; // Staff behavior is always included
+      const price = data.pricing[Math.floor(Math.random() * data.pricing.length)];
+      const ending = data.endings[Math.floor(Math.random() * data.endings.length)];
+      
+      let bodyParts = [middle];
+
+      // 3. Randomly drop categories to vary length (Anti-Spam feature)
+      const dropPrice = Math.random() < 0.2; 
+      const dropEnding = Math.random() < 0.2;
+
+      // Ensure the review remains detailed.
+      if (!dropPrice) {
+        bodyParts.push(price);
+      }
+      if (!dropEnding || dropPrice) {
+        bodyParts.push(ending);
+      }
+
+      // 4. Shuffle the body sentences so the rhythm/order is totally unpredictable
+      for (let i = bodyParts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bodyParts[i], bodyParts[j]] = [bodyParts[j], bodyParts[i]];
+      }
+
+      // 5. Piece it all together
+      return `${intro} ${bodyParts.join(" ")} ${bonus}`;
+    }
+
     function getRandomImages(total, count) {
       const arr = Array.from({ length: total }, (_, i) => `img${i + 1}.png`);
       for (let i = arr.length - 1; i > 0; i--) {
@@ -289,7 +663,7 @@
       btn.disabled = true;
       label.textContent = 'Working…';
 
-      // 1. Pick & show review instantly
+      // 1. Pick & show dynamic review based on selected language
       const text = pickReview();
       showReview(text);
 
