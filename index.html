@@ -39,7 +39,6 @@
       box-shadow: 0 2px 16px rgba(59,130,246,0.4); overflow: hidden; flex-shrink: 0;
     }
     .logo img  { width: 100%; height: 100%; object-fit: contain; }
-    .logo span { color: #fff; font-size: 15px; font-weight: 800; letter-spacing: -0.5px; }
     .brand-text .name { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.6px; line-height: 1; }
     .brand-text .tag  { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
     .headline { font-size: clamp(26px, 5vw, 32px); font-weight: 800; color: var(--text); letter-spacing: -0.8px; line-height: 1.15; }
@@ -53,35 +52,43 @@
     .top-section { padding: 28px 28px 24px; border-bottom: 1px solid var(--border); }
     .section-label { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block; }
     .branches { display: flex; flex-direction: column; gap: 8px; }
+
     .branch-btn {
       font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
       color: var(--text-soft); background: var(--surface);
       border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px;
       text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px;
       transition: background 0.15s, border-color 0.15s, color 0.15s; width: 100%;
+      position: relative;
     }
     .branch-btn:hover    { background: var(--blue-light); border-color: rgba(59,130,246,0.4); color: var(--text); }
-    .branch-btn.selected { background: var(--blue-light); border-color: var(--blue); color: var(--text); font-weight: 600; }
+    .branch-btn:disabled { cursor: default; opacity: 0.75; }
+    .branch-btn.active   { background: var(--blue-light); border-color: var(--blue); color: var(--text); font-weight: 600; }
+    .branch-btn.success  { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); }
+
     .branch-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
-    .branch-btn.selected .branch-dot { background: var(--blue); }
+    .branch-btn.active .branch-dot  { background: var(--blue); }
+    .branch-btn.success .branch-dot { background: var(--green); }
     .branch-name { flex: 1; }
-    .branch-check { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); display: none; align-items: center; justify-content: center; flex-shrink: 0; }
-    .branch-btn.selected .branch-check { display: flex; }
-    .gen-wrap { padding: 20px 28px; border-bottom: 1px solid var(--border); }
-    .btn-generate {
-      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
-      color: #fff; background: var(--blue); border: none; border-radius: 14px;
-      padding: 14px 24px; width: 100%; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 9px;
-      box-shadow: 0 1px 3px rgba(59,130,246,0.3), 0 4px 16px rgba(59,130,246,0.25);
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+
+    .branch-status { font-size: 11.5px; font-weight: 600; color: var(--muted); flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+    .branch-status .spinner {
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 2px solid rgba(59,130,246,0.25); border-top-color: var(--blue);
+      animation: spin 0.7s linear infinite; display: none;
     }
-    .btn-generate:hover { background: var(--blue-hover); box-shadow: 0 2px 8px rgba(59,130,246,0.4), 0 8px 28px rgba(59,130,246,0.3); }
-    .btn-generate:active { transform: scale(0.98); }
-    .output-section { padding: 24px 28px; min-height: 180px; display: flex; flex-direction: column; gap: 18px; }
+    .branch-btn.active .branch-status .spinner { display: inline-block; }
+    .branch-btn.active .branch-status .label { color: var(--blue-hover); }
+    .branch-btn.success .branch-status .label { color: var(--green); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .branch-check { width: 18px; height: 18px; border-radius: 50%; background: var(--green); display: none; align-items: center; justify-content: center; flex-shrink: 0; }
+    .branch-btn.success .branch-check { display: flex; }
+
+    .output-section { padding: 24px 28px; min-height: 160px; display: flex; flex-direction: column; gap: 18px; }
     .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); padding: 16px 0 8px; }
     .empty-state svg { opacity: 0.35; }
-    .empty-state p { font-size: 13.5px; text-align: center; max-width: 240px; line-height: 1.6; }
+    .empty-state p { font-size: 13.5px; text-align: center; max-width: 260px; line-height: 1.6; }
     .review-box {
       background: var(--blue-light); border: 1.5px solid rgba(59,130,246,0.14);
       border-radius: 16px; padding: 20px 22px; position: relative; display: none;
@@ -89,75 +96,46 @@
     .review-box.visible { display: block; }
     .review-box::before { content: '\201C'; position: absolute; top: -12px; left: 14px; font-size: 68px; font-weight: 800; color: rgba(59,130,246,0.2); line-height: 1; font-family: Georgia, serif; pointer-events: none; }
     #review-text { font-size: 15px; font-weight: 400; font-style: italic; color: var(--text); line-height: 1.78; position: relative; z-index: 1; }
-    .cursor { display: inline-block; width: 2px; height: 1.05em; background: var(--blue); margin-left: 1px; vertical-align: text-bottom; border-radius: 1px; animation: blink 0.85s step-end infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
     .branch-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(59,130,246,0.15); color: var(--blue-hover); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 12px; }
-    .action-row { display: none; gap: 10px; }
-    .action-row.visible { display: flex; }
-    .btn-action { font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; border-radius: 11px; padding: 11px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; justify-content: center; flex: 1; transition: background 0.14s, transform 0.1s; white-space: nowrap; }
-    .btn-action:active { transform: scale(0.97); }
-    .btn-copy { color: var(--blue-hover); background: var(--blue-light); border: 1.5px solid rgba(59,130,246,0.25); }
-    .btn-copy:hover  { background: var(--blue-mid); }
-    .btn-copy.copied { color: var(--green); background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); }
-    .btn-open { color: #fff; background: #2A3A5C; border: 1.5px solid rgba(255,255,255,0.08); }
-    .btn-open:hover { background: #354870; }
+
+    .status-row { display: none; gap: 8px; flex-wrap: wrap; }
+    .status-row.visible { display: flex; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 100px;
+      transition: all 0.2s;
+    }
+    .pill.pending  { background: rgba(107,122,153,0.15); color: var(--muted); }
+    .pill.done     { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.25); }
+    .pill.loading  { background: rgba(59,130,246,0.12); color: var(--blue-hover); border: 1px solid rgba(59,130,246,0.2); }
+
     #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: #3B82F6; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border-radius: 100px; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; white-space: nowrap; z-index: 999; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .footer { margin-top: 22px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.7; }
     @media (max-width: 480px) {
       body { padding: 32px 12px 52px; }
-      .top-section, .gen-wrap, .output-section { padding-left: 18px; padding-right: 18px; }
-      .btn-action { font-size: 12.5px; padding: 10px 13px; }
+      .top-section, .output-section { padding-left: 18px; padding-right: 18px; }
+      .branch-status .label { display: none; }
     }
   </style>
 </head>
 <body>
   <header class="header">
     <div class="brand">
-      <div class="logo"><img src="logo.png" /></div>
+      <div class="logo"><img src="logo.png" alt="RJ Mobile" /></div>
       <div class="brand-text">
         <div class="name">RJ Mobile</div>
         <div class="tag">Review Generator</div>
       </div>
     </div>
     <h1 class="headline">Leave us a <em>review</em></h1>
-    <p class="subline">Select your branch, pick a review, then copy and post it in seconds.</p>
+    <p class="subline">Tap your branch — your review copies, images download, and the review page opens instantly.</p>
   </header>
 
   <div class="card">
     <div class="top-section">
-      <span class="section-label">Choose your branch</span>
-      <div class="branches" id="branches">
-        <button class="branch-btn" data-branch="RJ Mobile – Murlipura, 1 Number" data-link="https://search.google.com/local/writereview?placeid=ChIJ47_zeYezbTkRcmkoZWMfX_E" onclick="selectBranch(this)">
-          <span class="branch-dot"></span><span class="branch-name">Murlipura, 1 Number</span>
-          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <button class="branch-btn" data-branch="RJ Mobile – VKI, 17 Number" data-link="https://search.google.com/local/writereview?placeid=ChIJa4dK3aGzbTkRA5PDLbAdtxU" onclick="selectBranch(this)">
-          <span class="branch-dot"></span><span class="branch-name">VKI, 17 Number</span>
-          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <button class="branch-btn" data-branch="RJ Mobile – Shastri Nagar" data-link="https://search.google.com/local/writereview?placeid=ChIJPy_2gv6zbTkRNkLjdwMftK4" onclick="selectBranch(this)">
-          <span class="branch-dot"></span><span class="branch-name">Shastri Nagar</span>
-          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <button class="branch-btn" data-branch="RJ Mobile – VKI, Lohamandi" data-link="https://search.google.com/local/writereview?placeid=ChIJ7wWKoB-zbTkRuoxnfdku9EQ" onclick="selectBranch(this)">
-          <span class="branch-dot"></span><span class="branch-name">VKI, Lohamandi</span>
-          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <button class="branch-btn" data-branch="RJ Mobile – Murlipura, 6 Number" data-link="https://search.google.com/local/writereview?placeid=ChIJx_8QWWizbTkRlvE7ym_Hy7w" onclick="selectBranch(this)">
-          <span class="branch-dot"></span><span class="branch-name">Murlipura, 6 Number</span>
-          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="gen-wrap">
-      <button class="btn-generate" id="gen-btn" onclick="generateReview()">
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <path d="M10 2.5L12.5 7.5H17.5L13.75 11L15 16L10 13L5 16L6.25 11L2.5 7.5H7.5L10 2.5Z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
-        </svg>
-        <span id="btn-label">Generate Review</span>
-      </button>
+      <span class="section-label">Tap your branch</span>
+      <div class="branches" id="branches"></div>
     </div>
 
     <div class="output-section">
@@ -166,7 +144,7 @@
           <rect x="6" y="8" width="36" height="32" rx="6" stroke="#94A3B8" stroke-width="2"/>
           <path d="M13 18h22M13 24h16M13 30h10" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <p>Select a branch and tap Generate — your review will appear here.</p>
+        <p>Tap a branch above — everything happens in one click.</p>
       </div>
       <div class="review-box" id="review-box">
         <p id="review-text"></p>
@@ -175,506 +153,198 @@
           <span id="branch-tag-text"></span>
         </div>
       </div>
-      <div class="action-row" id="action-row">
-        <button class="btn-action btn-copy" id="copy-btn" onclick="copyReview()">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-            <rect x="7" y="2" width="10" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M7 5H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-          <span id="copy-label">Copy Text</span>
-        </button>
-        <button class="btn-action btn-open" onclick="openLink()">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-            <path d="M11 3h6v6M17 3l-8 8M9 5H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Open Review Page
-        </button>
+      <div class="status-row" id="status-row">
+        <span class="pill" id="pill-copy">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><rect x="4" y="1" width="8" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 3.5H2.5A1.5 1.5 0 0 0 1 5v6.5A1.5 1.5 0 0 0 2.5 13h6A1.5 1.5 0 0 0 10 11.5V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Review copied
+        </span>
+        <span class="pill" id="pill-imgs">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="4.5" cy="4.5" r="1" fill="currentColor"/><path d="M1 9.5l3-3 2.5 2.5 2-2 3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          6 images downloading
+        </span>
+        <span class="pill" id="pill-link">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M7.5 2h4.5v4.5M12 2l-6 6M6 3H2.5A1.5 1.5 0 0 0 1 4.5v7A1.5 1.5 0 0 0 2.5 13h7A1.5 1.5 0 0 0 11 11.5V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Page opened
+        </span>
       </div>
     </div>
   </div>
 
-  <p class="footer">Feel free to personalise before posting</p>
+  <p class="footer">Feel free to personalise the review before posting · ⭐⭐⭐⭐⭐</p>
   <div id="toast"></div>
 
   <script>
-    // 500 flat pre-written independent reviews. No iteration generators, maps, or for-loops.
-    const REVIEWS = [
-      "RJ Mobile has an ultra-luxurious showroom setup. The customer support staff showed wonderful, polite behavior, and they even surprise you with premium free gifts at checkout. Highly recommended destination!",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The store executives have incredibly kind and gentle behavior. Walking out with lovely free gifts made the purchase even sweeter. A perfect five-star mobile showroom.",
-      "The showroom is ultra-luxurious and beautifully designed. The entire sales team has remarkably polite and welcoming behavior. Plus, I received an amazing free gift along with my new smartphone. Definitely my go-to mobile shop from now on.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. I am very impressed with their soft-spoken and professional behavior. They didn't hold back and gave me highly useful free accessories as gifts. Simply superb customer journey.",
-      "Walking inside feels like stepping into a modern luxury store. The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. A class apart from other multi-brand stores.",
-      "The showroom presentation is incredibly high-end and polished. The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. Hands down the finest retail brand around.",
-      "They have the most stunning and luxurious outlet in town. They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. Totally satisfied with my purchase here.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. Must visit if you want a premium smartphone.",
-      "The environment here is deeply premium, stylish, and comfortable. Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. They truly value their customers.",
-      "It offers an unforgettable elite showroom shopping experience. The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. An absolute 10 out of 10 experience!",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The customer support staff showed wonderful, polite behavior. Plus, I received an amazing free gift along with my new smartphone. Highly recommended destination!",
-      "The showroom is ultra-luxurious and beautifully designed. The entire sales team has remarkably polite and welcoming behavior. They didn't hold back and gave me highly useful free accessories as gifts. A perfect five-star mobile showroom.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. I am very impressed with their soft-spoken and professional behavior. Walking out with lovely free gifts made the purchase even sweeter. Definitely my go-to mobile shop from now on.",
-      "Walking inside feels like stepping into a modern luxury store. The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. Simply superb customer journey.",
-      "The showroom presentation is incredibly high-end and polished. The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. A class apart from other multi-brand stores.",
-      "They have the most stunning and luxurious outlet in town. They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. Hands down the finest retail brand around.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. Totally satisfied with my purchase here.",
-      "The environment here is deeply premium, stylish, and comfortable. Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. Must visit if you want a premium smartphone.",
-      "It offers an unforgettable elite showroom shopping experience. The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. They truly value their customers.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The store executives have incredibly kind and gentle behavior. They even surprise you with premium free gifts at checkout. An absolute 10 out of 10 experience!",
-      "Walking inside feels like stepping into a modern luxury store. The customer support staff showed wonderful, polite behavior. Walking out with lovely free gifts made the purchase even sweeter. Highly recommended destination!",
-      "The showroom presentation is incredibly high-end and polished. The entire sales team has remarkably polite and welcoming behavior. They offer genuine and high-quality free gifts on major upgrades. A perfect five-star mobile showroom.",
-      "They have the most stunning and luxurious outlet in town. I am very impressed with their soft-spoken and professional behavior. Got a fantastic complimentary gift that adds immense value. Definitely my go-to mobile shop from now on.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The employees treat you with respect and very humble behavior. The unexpected high-value free gifts were a wonderful bonus. Simply superb customer journey.",
-      "The environment here is deeply premium, stylish, and comfortable. The staff behavior is highly cooperative, patient, and friendly. They treat every buyer to delightful premium free gifts. A class apart from other multi-brand stores.",
-      "It offers an unforgettable elite showroom shopping experience. They handled everything with disciplined and customer-centric behavior. They handed over beautiful free gifts with full transparency. Hands down the finest retail brand around.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. Excellent treatment and noble behavior from everyone on the floor. The complementary free gifts they distribute are top tier. Totally satisfied with my purchase here.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. Their staff's cooperative behavior made my transaction completely smooth. They even surprise you with premium free gifts at checkout. Must visit if you want a premium smartphone.",
-      "The showroom is ultra-luxurious and beautifully designed. The team behaves exceptionally well and handles queries perfectly. Plus, I received an amazing free gift along with my new smartphone. They truly value their customers.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The store executives have incredibly kind and gentle behavior. They didn't hold back and gave me highly useful free accessories as gifts. An absolute 10 out of 10 experience!",
-      "The showroom presentation is incredibly high-end and polished. The customer support staff showed wonderful, polite behavior. Got a fantastic complimentary gift that adds immense value. Highly recommended destination!",
-      "They have the most stunning and luxurious outlet in town. The entire sales team has remarkably polite and welcoming behavior. The unexpected high-value free gifts were a wonderful bonus. A perfect five-star mobile showroom.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. I am very impressed with their soft-spoken and professional behavior. They treat every buyer to delightful premium free gifts. Definitely my go-to mobile shop from now on.",
-      "The environment here is deeply premium, stylish, and comfortable. The employees treat you with respect and very humble behavior. They handed over beautiful free gifts with full transparency. Simply superb customer journey.",
-      "It offers an unforgettable elite showroom shopping experience. The staff behavior is highly cooperative, patient, and friendly. The complementary free gifts they distribute are top tier. A class apart from other multi-brand stores.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. They handled everything with disciplined and customer-centric behavior. They even surprise you with premium free gifts at checkout. Hands down the finest retail brand around.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. Excellent treatment and noble behavior from everyone on the floor. Plus, I received an amazing free gift along with my new smartphone. Totally satisfied with my purchase here.",
-      "The showroom is ultra-luxurious and beautifully designed. Their staff's cooperative behavior made my transaction completely smooth. They didn't hold back and gave me highly useful free accessories as gifts. Must visit if you want a premium smartphone.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The team behaves exceptionally well and handles queries perfectly. Walking out with lovely free gifts made the purchase even sweeter. They truly value their customers.",
-      "Walking inside feels like stepping into a modern luxury store. The store executives have incredibly kind and gentle behavior. They offer genuine and high-quality free gifts on major upgrades. An absolute 10 out of 10 experience!",
-      "They have the most stunning and luxurious outlet in town. The customer support staff showed wonderful, polite behavior. The unexpected high-value free gifts were a wonderful bonus. Highly recommended destination!",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The entire sales team has remarkably polite and welcoming behavior. They treat every buyer to delightful premium free gifts. A perfect five-star mobile showroom.",
-      "The environment here is deeply premium, stylish, and comfortable. I am very impressed with their soft-spoken and professional behavior. They handed over beautiful free gifts with full transparency. Definitely my go-to mobile shop from now on.",
-      "It offers an unforgettable elite showroom shopping experience. The employees treat you with respect and very humble behavior. The complementary free gifts they distribute are top tier. Simply superb customer journey.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The staff behavior is highly cooperative, patient, and friendly. They even surprise you with premium free gifts at checkout. A class apart from other multi-brand stores.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. They handled everything with disciplined and customer-centric behavior. Plus, I received an amazing free gift along with my new smartphone. Hands down the finest retail brand around.",
-      "The showroom is ultra-luxurious and beautifully designed. Excellent treatment and noble behavior from everyone on the floor. They didn't hold back and gave me highly useful free accessories as gifts. Totally satisfied with my purchase here.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. Their staff's cooperative behavior made my transaction completely smooth. Walking out with lovely free gifts made the purchase even sweeter. Must visit if you want a premium smartphone.",
-      "Walking inside feels like stepping into a modern luxury store. The team behaves exceptionally well and handles queries perfectly. They offer genuine and high-quality free gifts on major upgrades. They truly value their customers.",
-      "The showroom presentation is incredibly high-end and polished. The store executives have incredibly kind and gentle behavior. Got a fantastic complimentary gift that adds immense value. An absolute 10 out of 10 experience!",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The customer support staff showed wonderful, polite behavior. They treat every buyer to delightful premium free gifts. Highly recommended destination!",
-      "The environment here is deeply premium, stylish, and comfortable. The entire sales team has remarkably polite and welcoming behavior. They handed over beautiful free gifts with full transparency. A perfect five-star mobile showroom.",
-      "It offers an unforgettable elite showroom shopping experience. I am very impressed with their soft-spoken and professional behavior. The complementary free gifts they distribute are top tier. Definitely my go-to mobile shop from now on.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The employees treat you with respect and very humble behavior. They even surprise you with premium free gifts at checkout. Simply superb customer journey.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The staff behavior is highly cooperative, patient, and friendly. Plus, I received an amazing free gift along with my new smartphone. A class apart from other multi-brand stores.",
-      "The showroom is ultra-luxurious and beautifully designed. They handled everything with disciplined and customer-centric behavior. They didn't hold back and gave me highly useful free accessories as gifts. Hands down the finest retail brand around.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. Excellent treatment and noble behavior from everyone on the floor. Walking out with lovely free gifts made the purchase even sweeter. Totally satisfied with my purchase here.",
-      "Walking inside feels like stepping into a modern luxury store. Their staff's cooperative behavior made my transaction completely smooth. They offer genuine and high-quality free gifts on major upgrades. Must visit if you want a premium smartphone.",
-      "The showroom presentation is incredibly high-end and polished. The team behaves exceptionally well and handles queries perfectly. Got a fantastic complimentary gift that adds immense value. They truly value their customers.",
-      "They have the most stunning and luxurious outlet in town. The store executives have incredibly kind and gentle behavior. The unexpected high-value free gifts were a wonderful bonus. An absolute 10 out of 10 experience!",
-      "The environment here is deeply premium, stylish, and comfortable. The customer support staff showed wonderful, polite behavior. They handed over beautiful free gifts with full transparency. Highly recommended destination!",
-      "It offers an unforgettable elite showroom shopping experience. The entire sales team has remarkably polite and welcoming behavior. The complementary free gifts they distribute are top tier. A perfect five-star mobile showroom.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. I am very impressed with their soft-spoken and professional behavior. They even surprise you with premium free gifts at checkout. Definitely my go-to mobile shop from now on.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The employees treat you with respect and very humble behavior. Plus, I received an amazing free gift along with my new smartphone. Simply superb customer journey.",
-      "The showroom is ultra-luxurious and beautifully designed. The staff behavior is highly cooperative, patient, and friendly. They didn't hold back and gave me highly useful free accessories as gifts. A class apart from other multi-brand stores.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. They handled everything with disciplined and customer-centric behavior. Walking out with lovely free gifts made the purchase even sweeter. Hands down the finest retail brand around.",
-      "Walking inside feels like stepping into a modern luxury store. Excellent treatment and noble behavior from everyone on the floor. They offer genuine and high-quality free gifts on major upgrades. Totally satisfied with my purchase here.",
-      "The showroom presentation is incredibly high-end and polished. Their staff's cooperative behavior made my transaction completely smooth. Got a fantastic complimentary gift that adds immense value. Must visit if you want a premium smartphone.",
-      "They have the most stunning and luxurious outlet in town. The team behaves exceptionally well and handles queries perfectly. The unexpected high-value free gifts were a wonderful bonus. They truly value their customers.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The store executives have incredibly kind and gentle behavior. They treat every buyer to delightful premium free gifts. An absolute 10 out of 10 experience!",
-      "It offers an unforgettable elite showroom shopping experience. The customer support staff showed wonderful, polite behavior. The complementary free gifts they distribute are top tier. Highly recommended destination!",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The entire sales team has remarkably polite and welcoming behavior. They even surprise you with premium free gifts at checkout. A perfect five-star mobile showroom.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. I am very impressed with their soft-spoken and professional behavior. Plus, I received an amazing free gift along with my new smartphone. Definitely my go-to mobile shop from now on.",
-      "The showroom is ultra-luxurious and beautifully designed. The employees treat you with respect and very humble behavior. They didn't hold back and gave me highly useful free accessories as gifts. Simply superb customer journey.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The staff behavior is highly cooperative, patient, and friendly. Walking out with lovely free gifts made the purchase even sweeter. A class apart from other multi-brand stores.",
-      "Walking inside feels like stepping into a modern luxury store. They handled everything with disciplined and customer-centric behavior. They offer genuine and high-quality free gifts on major upgrades. Hands down the finest retail brand around.",
-      "The showroom presentation is incredibly high-end and polished. Excellent treatment and noble behavior from everyone on the floor. Got a fantastic complimentary gift that adds immense value. Totally satisfied with my purchase here.",
-      "They have the most stunning and luxurious outlet in town. Their staff's cooperative behavior made my transaction completely smooth. The unexpected high-value free gifts were a wonderful bonus. Must visit if you want a premium smartphone.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The team behaves exceptionally well and handles queries perfectly. They treat every buyer to delightful premium free gifts. They truly value their customers.",
-      "The environment here is deeply premium, stylish, and comfortable. The store executives have incredibly kind and gentle behavior. They handed over beautiful free gifts with full transparency. An absolute 10 out of 10 experience!",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The customer support staff showed wonderful, polite behavior. They even surprise you with premium free gifts at checkout. Highly recommended destination!",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The entire sales team has remarkably polite and welcoming behavior. Plus, I received an amazing free gift along with my new smartphone. A perfect five-star mobile showroom.",
-      "The showroom is ultra-luxurious and beautifully designed. I am very impressed with their soft-spoken and professional behavior. They didn't hold back and gave me highly useful free accessories as gifts. Definitely my go-to mobile shop from now on.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The employees treat you with respect and very humble behavior. Walking out with lovely free gifts made the purchase even sweeter. Simply superb customer journey.",
-      "Walking inside feels like stepping into a modern luxury store. The staff behavior is highly cooperative, patient, and friendly. They offer genuine and high-quality free gifts on major upgrades. A class apart from other multi-brand stores.",
-      "The showroom presentation is incredibly high-end and polished. They handled everything with disciplined and customer-centric behavior. Got a fantastic complimentary gift that adds immense value. Hands down the finest retail brand around.",
-      "They have the most stunning and luxurious outlet in town. Excellent treatment and noble behavior from everyone on the floor. The unexpected high-value free gifts were a wonderful bonus. Totally satisfied with my purchase here.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. Their staff's cooperative behavior made my transaction completely smooth. They treat every buyer to delightful premium free gifts. Must visit if you want a premium smartphone.",
-      "The environment here is deeply premium, stylish, and comfortable. The team behaves exceptionally well and handles queries perfectly. They handed over beautiful free gifts with full transparency. They truly value their customers.",
-      "It offers an unforgettable elite showroom shopping experience. The store executives have incredibly kind and gentle behavior. The complementary free gifts they distribute are top tier. An absolute 10 out of 10 experience!",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The customer support staff showed wonderful, polite behavior. Plus, I received an amazing free gift along with my new smartphone. Highly recommended destination!",
-      "The showroom is ultra-luxurious and beautifully designed. The entire sales team has remarkably polite and welcoming behavior. They didn't hold back and gave me highly useful free accessories as gifts. A perfect five-star mobile showroom.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. I am very impressed with their soft-spoken and professional behavior. Walking out with lovely free gifts made the purchase even sweeter. Definitely my go-to mobile shop from now on.",
-      "Walking inside feels like stepping into a modern luxury store. The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. Simply superb customer journey.",
-      "The showroom presentation is incredibly high-end and polished. The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. A class apart from other multi-brand stores.",
-      "They have the most stunning and luxurious outlet in town. They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. Hands down the finest retail brand around.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. Totally satisfied with my purchase here.",
-      "The environment here is deeply premium, stylish, and comfortable. Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. Must visit if you want a premium smartphone.",
-      "It offers an unforgettable elite showroom shopping experience. The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. They truly value their customers.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The store executives have incredibly kind and gentle behavior. They even surprise you with premium free gifts at checkout. An absolute 10 out of 10 experience!",
-      "The showroom is ultra-luxurious and beautifully designed. The customer support staff showed wonderful, polite behavior. They didn't hold back and gave me highly useful free accessories as gifts. Highly recommended destination!",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The entire sales team has remarkably polite and welcoming behavior. Walking out with lovely free gifts made the purchase even sweeter. A perfect five-star mobile showroom.",
-      "Walking inside feels like stepping into a modern luxury store. I am very impressed with their soft-spoken and professional behavior. They offer genuine and high-quality free gifts on major upgrades. Definitely my go-to mobile shop from now on.",
-      "The showroom presentation is incredibly high-end and polished. The employees treat you with respect and very humble behavior. Got a fantastic complimentary gift that adds immense value. Simply superb customer journey.",
-      "They have the most stunning and luxurious outlet in town. The staff behavior is highly cooperative, patient, and friendly. The unexpected high-value free gifts were a wonderful bonus. A class apart from other multi-brand stores.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. They handled everything with disciplined and customer-centric behavior. They treat every buyer to delightful premium free gifts. Hands down the finest retail brand around.",
-      "The environment here is deeply premium, stylish, and comfortable. Excellent treatment and noble behavior from everyone on the floor. They handed over beautiful free gifts with full transparency. Totally satisfied with my purchase here.",
-      "It offers an unforgettable elite showroom shopping experience. Their staff's cooperative behavior made my transaction completely smooth. The complementary free gifts they distribute are top tier. Must visit if you want a premium smartphone.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The team behaves exceptionally well and handles queries perfectly. They even surprise you with premium free gifts at checkout. They truly value their customers.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The store executives have incredibly kind and gentle behavior. Plus, I received an amazing free gift along with my new smartphone. An absolute 10 out of 10 experience!",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The customer support staff showed wonderful, polite behavior. Walking out with lovely free gifts made the purchase even sweeter. Highly recommended destination!",
-      "Walking inside feels like stepping into a modern luxury store. The entire sales team has remarkably polite and welcoming behavior. They offer genuine and high-quality free gifts on major upgrades. A perfect five-star mobile showroom.",
-      "The showroom presentation is incredibly high-end and polished. I am very impressed with their soft-spoken and professional behavior. Got a fantastic complimentary gift that adds immense value. Definitely my go-to mobile shop from now on.",
-      "They have the most stunning and luxurious outlet in town. The employees treat you with respect and very humble behavior. The unexpected high-value free gifts were a wonderful bonus. Simply superb customer journey.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The staff behavior is highly cooperative, patient, and friendly. They treat every buyer to delightful premium free gifts. A class apart from other multi-brand stores.",
-      "The environment here is deeply premium, stylish, and comfortable. They handled everything with disciplined and customer-centric behavior. They handed over beautiful free gifts with full transparency. Hands down the finest retail brand around.",
-      "It offers an unforgettable elite showroom shopping experience. Excellent treatment and noble behavior from everyone on the floor. The complementary free gifts they distribute are top tier. Totally satisfied with my purchase here.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. Their staff's cooperative behavior made my transaction completely smooth. They even surprise you with premium free gifts at checkout. Must visit if you want a premium smartphone.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The team behaves exceptionally well and handles queries perfectly. Plus, I received an amazing free gift along with my new smartphone. They truly value their customers.",
-      "The showroom is ultra-luxurious and beautifully designed. The store executives have incredibly kind and gentle behavior. They didn't hold back and gave me highly useful free accessories as gifts. An absolute 10 out of 10 experience!",
-      "Walking inside feels like stepping into a modern luxury store. The customer support staff showed wonderful, polite behavior. They offer genuine and high-quality free gifts on major upgrades. Highly recommended destination!",
-      "The showroom presentation is incredibly high-end and polished. The entire sales team has remarkably polite and welcoming behavior. Got a fantastic complimentary gift that adds immense value. A perfect five-star mobile showroom.",
-      "They have the most stunning and luxurious outlet in town. I am very impressed with their soft-spoken and professional behavior. The unexpected high-value free gifts were a wonderful bonus. Definitely my go-to mobile shop from now on.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The employees treat you with respect and very humble behavior. They treat every buyer to delightful premium free gifts. Simply superb customer journey.",
-      "The environment here is deeply premium, stylish, and comfortable. The staff behavior is highly cooperative, patient, and friendly. They handed over beautiful free gifts with full transparency. A class apart from other multi-brand stores.",
-      "It offers an unforgettable elite showroom shopping experience. They handled everything with disciplined and customer-centric behavior. The complementary free gifts they distribute are top tier. Hands down the finest retail brand around.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. Excellent treatment and noble behavior from everyone on the floor. They even surprise you with premium free gifts at checkout. Totally satisfied with my purchase here.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. Their staff's cooperative behavior made my transaction completely smooth. Plus, I received an amazing free gift along with my new smartphone. Must visit if you want a premium smartphone.",
-      "The showroom is ultra-luxurious and beautifully designed. The team behaves exceptionally well and handles queries perfectly. They didn't hold back and gave me highly useful free accessories as gifts. They truly value their customers.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The store executives have incredibly kind and gentle behavior. Walking out with lovely free gifts made the purchase even sweeter. An absolute 10 out of 10 experience!",
-      "The showroom presentation is incredibly high-end and polished. The customer support staff showed wonderful, polite behavior. Got a fantastic complimentary gift that adds immense value. Highly recommended destination!",
-      "They have the most stunning and luxurious outlet in town. The entire sales team has remarkably polite and welcoming behavior. The unexpected high-value free gifts were a wonderful bonus. A perfect five-star mobile showroom.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. I am very impressed with their soft-spoken and professional behavior. They treat every buyer to delightful premium free gifts. Definitely my go-to mobile shop from now on.",
-      "The environment here is deeply premium, stylish, and comfortable. The employees treat you with respect and very humble behavior. They handed over beautiful free gifts with full transparency. Simply superb customer journey.",
-      "It offers an unforgettable elite showroom shopping experience. The staff behavior is highly cooperative, patient, and friendly. The complementary free gifts they distribute are top tier. A class apart from other multi-brand stores.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. They handled everything with disciplined and customer-centric behavior. They even surprise you with premium free gifts at checkout. Hands down the finest retail brand around.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. Excellent treatment and noble behavior from everyone on the floor. Plus, I received an amazing free gift along with my new smartphone. Totally satisfied with my purchase here.",
-      "The showroom is ultra-luxurious and beautifully designed. Their staff's cooperative behavior made my transaction completely smooth. They didn't hold back and gave me highly useful free accessories as gifts. Must visit if you want a premium smartphone.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The team behaves exceptionally well and handles queries perfectly. Walking out with lovely free gifts made the purchase even sweeter. They truly value their customers.",
-      "Walking inside feels like stepping into a modern luxury store. The store executives have incredibly kind and gentle behavior. They offer genuine and high-quality free gifts on major upgrades. An absolute 10 out of 10 experience!",
-      "They have the most stunning and luxurious outlet in town. The customer support staff showed wonderful, polite behavior. The unexpected high-value free gifts were a wonderful bonus. Highly recommended destination!",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The entire sales team has remarkably polite and welcoming behavior. They treat every buyer to delightful premium free gifts. A perfect five-star mobile showroom.",
-      "The environment here is deeply premium, stylish, and comfortable. I am very impressed with their soft-spoken and professional behavior. They handed over beautiful free gifts with full transparency. Definitely my go-to mobile shop from now on.",
-      "It offers an unforgettable elite showroom shopping experience. The employees treat you with respect and very humble behavior. The complementary free gifts they distribute are top tier. Simply superb customer journey.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The staff behavior is highly cooperative, patient, and friendly. They even surprise you with premium free gifts at checkout. A class apart from other multi-brand stores.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. They handled everything with disciplined and customer-centric behavior. Plus, I received an amazing free gift along with my new smartphone. Hands down the finest retail brand around.",
-      "The showroom is ultra-luxurious and beautifully designed. Excellent treatment and noble behavior from everyone on the floor. They didn't hold back and gave me highly useful free accessories as gifts. Totally satisfied with my purchase here.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. Their staff's cooperative behavior made my transaction completely smooth. Walking out with lovely free gifts made the purchase even sweeter. Must visit if you want a premium smartphone.",
-      "Walking inside feels like stepping into a modern luxury store. The team behaves exceptionally well and handles queries perfectly. They offer genuine and high-quality free gifts on major upgrades. They truly value their customers.",
-      "The showroom presentation is incredibly high-end and polished. The store executives have incredibly kind and gentle behavior. Got a fantastic complimentary gift that adds immense value. An absolute 10 out of 10 experience!",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The customer support staff showed wonderful, polite behavior. They treat every buyer to delightful premium free gifts. Highly recommended destination!",
-      "The environment here is deeply premium, stylish, and comfortable. The entire sales team has remarkably polite and welcoming behavior. They handed over beautiful free gifts with full transparency. A perfect five-star mobile showroom.",
-      "It offers an unforgettable elite showroom shopping experience. I am very impressed with their soft-spoken and professional behavior. The complementary free gifts they distribute are top tier. Definitely my go-to mobile shop from now on.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The employees treat you with respect and very humble behavior. They even surprise you with premium free gifts at checkout. Simply superb customer journey.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The staff behavior is highly cooperative, patient, and friendly. Plus, I received an amazing free gift along with my new smartphone. A class apart from other multi-brand stores.",
-      "The showroom is ultra-luxurious and beautifully designed. They handled everything with disciplined and customer-centric behavior. They didn't hold back and gave me highly useful free accessories as gifts. Hands down the finest retail brand around.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. Excellent treatment and noble behavior from everyone on the floor. Walking out with lovely free gifts made the purchase even sweeter. Totally satisfied with my purchase here.",
-      "Walking inside feels like stepping into a modern luxury store. Their staff's cooperative behavior made my transaction completely smooth. They offer genuine and high-quality free gifts on major upgrades. Must visit if you want a premium smartphone.",
-      "The showroom presentation is incredibly high-end and polished. The team behaves exceptionally well and handles queries perfectly. Got a fantastic complimentary gift that adds immense value. They truly value their customers.",
-      "They have the most stunning and luxurious outlet in town. The store executives have incredibly kind and gentle behavior. The unexpected high-value free gifts were a wonderful bonus. An absolute 10 out of 10 experience!",
-      "The environment here is deeply premium, stylish, and comfortable. The customer support staff showed wonderful, polite behavior. They handed over beautiful free gifts with full transparency. Highly recommended destination!",
-      "It offers an unforgettable elite showroom shopping experience. The entire sales team has remarkably polite and welcoming behavior. The complementary free gifts they distribute are top tier. A perfect five-star mobile showroom.",
-      "The showroom layout is pristine, modern, elegant, and luxurious. I am very impressed with their soft-spoken and professional behavior. They even surprise you with premium free gifts at checkout. Definitely my go-to mobile shop from now on.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The employees treat you with respect and very humble behavior. Plus, I received an amazing free gift along with my new smartphone. Simply superb customer journey.",
-      "The showroom is ultra-luxurious and beautifully designed. The staff behavior is highly cooperative, patient, and friendly. They didn't hold back and gave me highly useful free accessories as gifts. A class apart from other multi-brand stores.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. They handled everything with disciplined and customer-centric behavior. Walking out with lovely free gifts made the purchase even sweeter. Hands down the finest retail brand around.",
-      "Walking inside feels like stepping into a modern luxury store. Excellent treatment and noble behavior from everyone on the floor. They offer genuine and high-quality free gifts on major upgrades. Totally satisfied with my purchase here.",
-      "The showroom presentation is incredibly high-end and polished. Their staff's cooperative behavior made my transaction completely smooth. Got a fantastic complimentary gift that adds immense value. Must visit if you want a premium smartphone.",
-      "They have the most stunning and luxurious outlet in town. The team behaves exceptionally well and handles queries perfectly. The unexpected high-value free gifts were a wonderful bonus. They truly value their customers.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The store executives have incredibly kind and gentle behavior. They treat every buyer to delightful premium free gifts. An absolute 10 out of 10 experience!",
-      "It offers an unforgettable elite showroom shopping experience. The customer support staff showed wonderful, polite behavior. The complementary free gifts they distribute are top tier. Highly recommended destination!",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The entire sales team has remarkably polite and welcoming behavior. They even surprise you with premium free gifts at checkout. A perfect five-star mobile showroom.",
-      "RJ Mobile feels like a high-end luxury tech store lounge. I am very impressed with their soft-spoken and professional behavior. Plus, I received an amazing free gift along with my new smartphone. Definitely my go-to mobile shop from now on.",
-      "The showroom is ultra-luxurious and beautifully designed. The employees treat you with respect and very humble behavior. They didn't hold back and gave me highly useful free accessories as gifts. Simply superb customer journey.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The staff behavior is highly cooperative, patient, and friendly. Walking out with lovely free gifts made the purchase even sweeter. A class apart from other multi-brand stores.",
-      "Walking inside feels like stepping into a modern luxury store. They handled everything with disciplined and customer-centric behavior. They offer genuine and high-quality free gifts on major upgrades. Hands down the finest retail brand around.",
-      "The showroom presentation is incredibly high-end and polished. Excellent treatment and noble behavior from everyone on the floor. Got a fantastic complimentary gift that adds immense value. Totally satisfied with my purchase here.",
-      "They have the most stunning and luxurious outlet in town. Their staff's cooperative behavior made my transaction completely smooth. The unexpected high-value free gifts were a wonderful bonus. Must visit if you want a premium smartphone.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. The team behaves exceptionally well and handles queries perfectly. They treat every buyer to delightful premium free gifts. They truly value their customers.",
-      "The environment here is deeply premium, stylish, and comfortable. The store executives have incredibly kind and gentle behavior. They handed over beautiful free gifts with full transparency. An absolute 10 out of 10 experience!",
-      "The showroom layout is pristine, modern, elegant, and luxurious. The customer support staff showed wonderful, polite behavior. They even surprise you with premium free gifts at checkout. Highly recommended destination!",
-      "RJ Mobile feels like a high-end luxury tech store lounge. The entire sales team has remarkably polite and welcoming behavior. Plus, I received an amazing free gift along with my new smartphone. A perfect five-star mobile showroom.",
-      "The showroom is ultra-luxurious and beautifully designed. I am very impressed with their soft-spoken and professional behavior. They didn't hold back and gave me highly useful free accessories as gifts. Definitely my go-to mobile shop from now on.",
-      "RJ Mobile features an exceptionally premium, luxurious layout. The employees treat you with respect and very humble behavior. Walking out with lovely free gifts made the purchase even sweeter. Simply superb customer journey.",
-      "Walking inside feels like stepping into a modern luxury store. The staff behavior is highly cooperative, patient, and friendly. They offer genuine and high-quality free gifts on major upgrades. A class apart from other multi-brand stores.",
-      "The showroom presentation is incredibly high-end and polished. They handled everything with disciplined and customer-centric behavior. Got a fantastic complimentary gift that adds immense value. Hands down the finest retail brand around.",
-      "They have the most stunning and luxurious outlet in town. Excellent treatment and noble behavior from everyone on the floor. The unexpected high-value free gifts were a wonderful bonus. Totally satisfied with my purchase here.",
-      "A completely magnificent, luxury store layout that instantly catches your eye. Their staff's cooperative behavior made my transaction completely smooth. They treat every buyer to delightful premium free gifts. Must visit if you want a premium smartphone.",
-      "The environment here is deeply premium, stylish, and comfortable. The team behaves exceptionally well and handles queries perfectly. They handed over beautiful free gifts with full transparency. They truly value their customers.",
-      "It offers an unforgettable elite showroom shopping experience. The store executives have incredibly kind and gentle behavior. The complementary free gifts they distribute are top tier. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They even surprise you with premium free gifts at checkout. RJ Mobile has an ultra-luxurious showroom setup. Highly recommended destination!",
-      "The store executives have incredibly kind and gentle behavior. Walking out with lovely free gifts made the purchase even sweeter. The showroom layout is pristine, modern, elegant, and luxurious. A perfect five-star mobile showroom.",
-      "The entire sales team has remarkably polite and welcoming behavior. Plus, I received an amazing free gift along with my new smartphone. The showroom is ultra-luxurious and beautifully designed. Definitely my go-to mobile shop from now on.",
-      "I am very impressed with their soft-spoken and professional behavior. They didn't hold back and gave me highly useful free accessories as gifts. RJ Mobile features an exceptionally premium, luxurious layout. Simply superb customer journey.",
-      "The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. A class apart from other multi-brand stores.",
-      "The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Hands down the finest retail brand around.",
-      "They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Totally satisfied with my purchase here.",
-      "Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Must visit if you want a premium smartphone.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. They truly value their customers.",
-      "The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Walking out with lovely free gifts made the purchase even sweeter. Walking inside feels like stepping into a modern luxury store. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They offer genuine and high-quality free gifts on major upgrades. The showroom presentation is incredibly high-end and polished. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Got a fantastic complimentary gift that adds immense value. They have the most stunning and luxurious outlet in town. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. The unexpected high-value free gifts were a wonderful bonus. A completely magnificent, luxury store layout that instantly catches your eye. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They treat every buyer to delightful premium free gifts. The environment here is deeply premium, stylish, and comfortable. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They handed over beautiful free gifts with full transparency. It offers an unforgettable elite showroom shopping experience. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. The complementary free gifts they distribute are top tier. The showroom layout is pristine, modern, elegant, and luxurious. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They even surprise you with premium free gifts at checkout. RJ Mobile feels like a high-end luxury tech store lounge. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. Plus, I received an amazing free gift along with my new smartphone. The showroom is ultra-luxurious and beautifully designed. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They didn't hold back and gave me highly useful free accessories as gifts. RJ Mobile features an exceptionally premium, luxurious layout. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. An absolute 10 out of 10 experience!",
-      "The customer support staff showed wonderful, polite behavior. Plus, I received an amazing free gift along with my new smartphone. RJ Mobile feels like a high-end luxury tech store lounge. Highly recommended destination!",
-      "The entire sales team has remarkably polite and welcoming behavior. They didn't hold back and gave me highly useful free accessories as gifts. The showroom is ultra-luxurious and beautifully designed. A perfect five-star mobile showroom.",
-      "I am very impressed with their soft-spoken and professional behavior. Walking out with lovely free gifts made the purchase even sweeter. RJ Mobile features an exceptionally premium, luxurious layout. Definitely my go-to mobile shop from now on.",
-      "The employees treat you with respect and very humble behavior. They offer genuine and high-quality free gifts on major upgrades. Walking inside feels like stepping into a modern luxury store. Simply superb customer journey.",
-      "The staff behavior is highly cooperative, patient, and friendly. Got a fantastic complimentary gift that adds immense value. The showroom presentation is incredibly high-end and polished. A class apart from other multi-brand stores.",
-      "They handled everything with disciplined and customer-centric behavior. The unexpected high-value free gifts were a wonderful bonus. They have the most stunning and luxurious outlet in town. Hands down the finest retail brand around.",
-      "Excellent treatment and noble behavior from everyone on the floor. They treat every buyer to delightful premium free gifts. A completely magnificent, luxury store layout that instantly catches your eye. Totally satisfied with my purchase here.",
-      "Their staff's cooperative behavior made my transaction completely smooth. They handed over beautiful free gifts with full transparency. The environment here is deeply premium, stylish, and comfortable. Must visit if you want a premium smartphone.",
-      "The team behaves exceptionally well and handles queries perfectly. The complementary free gifts they distribute are top tier. It offers an unforgettable elite showroom shopping experience. They truly value their customers.",
-      "The store executives have incredibly kind and gentle behavior. They even surprise you with premium free gifts at checkout. The showroom layout is pristine, modern, elegant, and luxurious. An absolute 10 out of 10 experience!"
+    const BRANCHES = [
+      {
+        id: "1no",
+        name: "Murlipura, 1 Number",
+        link: "https://search.google.com/local/writereview?placeid=ChIJ47_zeYezbTkRcmkoZWMfX_E",
+        imagePrefix: "1no_img",
+        reviews: [
+          "RJ Mobile's Murlipura 1 Number branch has an ultra-luxurious showroom setup. The staff showed wonderful, polite behavior, and they even surprised me with a premium free gift at checkout. Highly recommended!",
+          "Visited the Murlipura 1 Number outlet and the layout is pristine, modern, and elegant. The team was incredibly kind and gentle, and I walked out with a lovely free gift too. A perfect five-star experience.",
+          "The Murlipura 1 Number showroom feels genuinely premium. Everyone on the floor was polite and welcoming, queries were handled patiently, and the complimentary gift was a nice surprise. Easily the best mobile store nearby."
+        ]
+      },
+      {
+        id: "17no",
+        name: "VKI, 17 Number",
+        link: "https://search.google.com/local/writereview?placeid=ChIJa4dK3aGzbTkRA5PDLbAdtxU",
+        imagePrefix: "17no_img",
+        reviews: [
+          "The VKI 17 Number branch of RJ Mobile has a beautifully designed, high-end showroom. The sales team was remarkably polite, and I received a great free gift with my purchase. Definitely my go-to shop now.",
+          "RJ Mobile at VKI 17 Number impressed me with their soft-spoken, professional staff and a spotless, premium store layout. They also handed over some genuinely useful free accessories. Superb experience overall.",
+          "Walking into the VKI 17 Number outlet feels like stepping into a modern luxury store. The employees are respectful and humble, and the free gifts on offer add real value. Highly recommended for anyone nearby."
+        ]
+      },
+      {
+        id: "shastri",
+        name: "Shastri Nagar",
+        link: "https://search.google.com/local/writereview?placeid=ChIJPy_2gv6zbTkRNkLjdwMftK4",
+        imagePrefix: "shastri_img",
+        reviews: [
+          "RJ Mobile's Shastri Nagar branch has a stunning, high-end outlet feel. The staff was disciplined, customer-centric, and the unexpected free gift was a wonderful bonus. Totally satisfied with my visit.",
+          "The Shastri Nagar showroom is magnificent and instantly catches the eye. Everyone on the floor treated me with genuine respect, and the premium free gift made the purchase even sweeter. Must visit if you're upgrading your phone.",
+          "Shopped at the Shastri Nagar RJ Mobile store and loved the premium, comfortable environment. Their cooperative staff made the whole transaction smooth, and the free gifts were handed over with full transparency."
+        ]
+      },
+      {
+        id: "lohamandi",
+        name: "VKI, Lohamandi",
+        link: "https://search.google.com/local/writereview?placeid=ChIJ7wWKoB-zbTkRuoxnfdku9EQ",
+        imagePrefix: "lohamandi_img",
+        reviews: [
+          "The VKI Lohamandi branch offers an unforgettable, elite showroom experience. The team handled all my queries perfectly, and the complimentary gifts they hand out are genuinely top tier. A solid 10 out of 10.",
+          "RJ Mobile Lohamandi has a pristine, elegant, and luxurious layout. The store executives were kind and gentle throughout, and they even surprised me with a premium free gift at checkout. Highly recommend this branch.",
+          "Had a great experience at the Lohamandi outlet — the customer support staff was wonderfully polite, and I walked away with a lovely free gift alongside my new phone. Definitely worth a visit."
+        ]
+      },
+      {
+        id: "6no",
+        name: "Murlipura, 6 Number",
+        link: "https://search.google.com/local/writereview?placeid=ChIJx_8QWWizbTkRlvE7ym_Hy7w",
+        imagePrefix: "6no_img",
+        reviews: [
+          "The Murlipura 6 Number branch of RJ Mobile has an exceptionally premium, luxurious layout. Staff behavior was highly cooperative and friendly, and the complimentary gift added real value. Hands down a great store.",
+          "Visited RJ Mobile at Murlipura 6 Number and the presentation is incredibly high-end and polished. The entire sales team was welcoming, and I didn't expect such a useful free gift with my purchase. Very impressed.",
+          "RJ Mobile's 6 Number outlet in Murlipura feels like a proper luxury tech lounge. The employees were humble and attentive, and the free gifts they offer on upgrades are genuinely high quality. Will be back again."
+        ]
+      }
     ];
 
-    let selectedBranchName = '';
-    let selectedBranchLink = '';
-    let generatedText      = '';
-    let lastIndex          = -1;
+    const IMAGE_COUNT = 6;
+    let activeId = null;
+    let lastReviewIndex = {};
 
-    function selectBranch(el) {
-      document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedBranchName = el.dataset.branch;
-      selectedBranchLink = el.dataset.link;
-    }
-
-    function pickReview() {
+    function pickReview(branch) {
+      const reviews = branch.reviews;
       let idx;
-      do { idx = Math.floor(Math.random() * REVIEWS.length); } while (idx === lastIndex);
-      lastIndex = idx;
-      return REVIEWS[idx];
+      do { idx = Math.floor(Math.random() * reviews.length); }
+      while (idx === lastReviewIndex[branch.id] && reviews.length > 1);
+      lastReviewIndex[branch.id] = idx;
+      return reviews[idx];
     }
 
-    async function generateReview() {
-      if (!selectedBranchName) { showToast('Please select a branch first'); return; }
-      clearOutput();
-      const text = pickReview();
-      generatedText = text;
-      await showReview(text);
-      document.getElementById('btn-label').textContent = 'Regenerate Review';
+    function renderBranches() {
+      const wrap = document.getElementById('branches');
+      wrap.innerHTML = '';
+      BRANCHES.forEach(branch => {
+        const btn = document.createElement('button');
+        btn.className = 'branch-btn';
+        btn.id = 'branch-' + branch.id;
+        btn.onclick = () => runBranch(branch);
+        btn.innerHTML = `
+          <span class="branch-dot"></span>
+          <span class="branch-name">${branch.name}</span>
+          <span class="branch-status"><span class="spinner"></span><span class="label">Working…</span></span>
+          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        `;
+        wrap.appendChild(btn);
+      });
     }
 
-    async function showReview(text) {
+    function setPill(id, state) {
+      document.getElementById(id).className = 'pill ' + state;
+    }
+
+    async function runBranch(branch) {
+      if (activeId) return; // ignore taps while one is running
+      activeId = branch.id;
+
+      document.querySelectorAll('.branch-btn').forEach(b => {
+        b.classList.remove('active', 'success');
+        b.disabled = true;
+      });
+      const btn = document.getElementById('branch-' + branch.id);
+      btn.classList.add('active');
+
+      // 1. Pick & show review instantly
+      const text = pickReview(branch);
+      showReview(text, branch.name);
+
+      // 2. Show status row
+      document.getElementById('status-row').classList.add('visible');
+      setPill('pill-copy',  'loading');
+      setPill('pill-imgs',  'pending');
+      setPill('pill-link',  'pending');
+
+      // 3. Copy to clipboard
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch (e) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+          document.body.appendChild(ta);
+          ta.focus(); ta.select();
+          copied = document.execCommand('copy');
+          document.body.removeChild(ta);
+        } catch (e2) { copied = false; }
+      }
+      setPill('pill-copy', copied ? 'done' : 'pending');
+
+      // 4. Download 6 branch-specific images (staggered so browser doesn't block)
+      setPill('pill-imgs', 'loading');
+      for (let i = 1; i <= IMAGE_COUNT; i++) {
+        const fileName = `${branch.imagePrefix}${i}.png`;
+        const a = document.createElement('a');
+        a.href = fileName;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        await wait(300);
+      }
+      setPill('pill-imgs', 'done');
+
+      // 5. Open review link
+      setPill('pill-link', 'loading');
+      await wait(400);
+      window.open(branch.link, '_blank', 'noopener,noreferrer');
+      setPill('pill-link', 'done');
+
+      // 6. Mark branch as done and re-enable
+      btn.classList.remove('active');
+      btn.classList.add('success');
+      showToast(copied ? 'Review copied — paste it on the page!' : 'Review shown — copy it manually');
+
+      setTimeout(() => {
+        document.querySelectorAll('.branch-btn').forEach(b => { b.disabled = false; });
+        btn.classList.remove('success');
+        activeId = null;
+      }, 3000);
+    }
+
+    function showReview(text, branchName) {
       document.getElementById('empty-state').style.display = 'none';
-      document.getElementById('branch-tag-text').textContent = selectedBranchName.replace('RJ Mobile – ', '');
       const box    = document.getElementById('review-box');
       const textEl = document.getElementById('review-text');
       box.classList.add('visible');
-      textEl.innerHTML = '';
-      const cursor = document.createElement('span');
-      cursor.className = 'cursor';
-      textEl.appendChild(cursor);
-      for (let i = 0; i < text.length; i++) {
-        textEl.insertBefore(document.createTextNode(text[i]), cursor);
-        await wait(text[i] === '.' || text[i] === ',' ? 28 : 12);
-      }
-      cursor.remove();
-      document.getElementById('action-row').classList.add('visible');
-    }
-
-    function copyReview() {
-      if (!generatedText) return;
-      const doSuccess = () => {
-        const btn   = document.getElementById('copy-btn');
-        const label = document.getElementById('copy-label');
-        btn.classList.add('copied');
-        label.textContent = '✓ Copied!';
-        showToast('Copied to clipboard');
-        setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy Text'; }, 2500);
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(generatedText).then(doSuccess).catch(() => fallbackCopy(doSuccess));
-      } else { fallbackCopy(doSuccess); }
-    }
-
-    function fallbackCopy(onSuccess) {
-      try {
-        const ta = document.createElement('textarea');
-        ta.value = generatedText;
-        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        const ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        if (ok) onSuccess(); else showToast('Copy failed — please copy manually');
-      } catch (e) { showToast('Copy failed — please copy manually'); }
-    }
-
-    function openLink() {
-      if (!selectedBranchLink) { showToast('Select a branch first'); return; }
-      window.open(selectedBranchLink, '_blank', 'noopener,noreferrer');
-    }
-
-    function clearOutput() {
-      document.getElementById('review-box').classList.remove('visible');
-      document.getElementById('review-text').innerHTML = '';
-      document.getElementById('action-row').classList.remove('visible');
-      document.getElementById('empty-state').style.display = 'none';
+      textEl.textContent = text;
+      document.getElementById('branch-tag-text').textContent = branchName;
     }
 
     let toastTimer;
@@ -682,10 +352,12 @@
       const t = document.getElementById('toast');
       t.textContent = msg; t.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    renderBranches();
   </script>
 </body>
 </html>
