@@ -10,7 +10,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --blue:       #3B82F6;
+      --blue:        #3B82F6;
       --blue-hover: #60A5FA;
       --blue-light: #1a2744;
       --blue-mid:   #1e3060;
@@ -31,10 +31,12 @@
       display: flex; flex-direction: column; align-items: center;
       padding: 52px 16px 64px;
     }
+
+    /* ── Header ── */
     .header { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; text-align: center; }
     .brand  { display: flex; align-items: center; gap: 11px; }
     .logo {
-      width: 46px; height: 46px; background: #3B82F6; border-radius: 13px;
+      width: 46px; height: 46px; background: transparent; border-radius: 13px;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 2px 16px rgba(59,130,246,0.4); overflow: hidden; flex-shrink: 0;
     }
@@ -44,51 +46,58 @@
     .headline { font-size: clamp(26px, 5vw, 32px); font-weight: 800; color: var(--text); letter-spacing: -0.8px; line-height: 1.15; }
     .headline em { font-style: normal; color: var(--blue); }
     .subline { font-size: 14.5px; color: var(--text-soft); line-height: 1.65; max-width: 360px; }
+
+    /* ── Card ── */
     .card {
       background: var(--white); border-radius: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.4);
       width: 100%; max-width: 520px; overflow: hidden;
     }
-    .top-section { padding: 28px 28px 24px; border-bottom: 1px solid var(--border); }
-    .section-label { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: block; }
-    .branches { display: flex; flex-direction: column; gap: 8px; }
 
-    .branch-btn {
-      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
-      color: var(--text-soft); background: var(--surface);
-      border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px;
-      text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s; width: 100%;
-      position: relative;
+    /* ── Branch info strip ── */
+    .branch-strip {
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
     }
-    .branch-btn:hover    { background: var(--blue-light); border-color: rgba(59,130,246,0.4); color: var(--text); }
-    .branch-btn:disabled { cursor: default; opacity: 0.75; }
-    .branch-btn.active   { background: var(--blue-light); border-color: var(--blue); color: var(--text); font-weight: 600; }
-    .branch-btn.success  { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); }
-
-    .branch-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
-    .branch-btn.active .branch-dot  { background: var(--blue); }
-    .branch-btn.success .branch-dot { background: var(--green); }
-    .branch-name { flex: 1; }
-
-    .branch-status { font-size: 11.5px; font-weight: 600; color: var(--muted); flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
-    .branch-status .spinner {
-      width: 13px; height: 13px; border-radius: 50%;
-      border: 2px solid rgba(59,130,246,0.25); border-top-color: var(--blue);
-      animation: spin 0.7s linear infinite; display: none;
+    .branch-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--blue-light); border: 1.5px solid rgba(59,130,246,0.3);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .branch-btn.active .branch-status .spinner { display: inline-block; }
-    .branch-btn.active .branch-status .label { color: var(--blue-hover); }
-    .branch-btn.success .branch-status .label { color: var(--green); }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .branch-info .branch-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+    .branch-info .branch-name  { font-size: 15px; font-weight: 700; color: var(--text); margin-top: 2px; }
 
-    .branch-check { width: 18px; height: 18px; border-radius: 50%; background: var(--green); display: none; align-items: center; justify-content: center; flex-shrink: 0; }
-    .branch-btn.success .branch-check { display: flex; }
+    /* ── Action button ── */
+    .gen-wrap { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .btn-action-main {
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      color: #fff; background: var(--blue); border: none; border-radius: 14px;
+      padding: 15px 24px; width: 100%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 1px 3px rgba(59,130,246,0.3), 0 4px 16px rgba(59,130,246,0.25);
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s, opacity 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .btn-action-main:hover { background: var(--blue-hover); box-shadow: 0 2px 8px rgba(59,130,246,0.4), 0 8px 28px rgba(59,130,246,0.3); }
+    .btn-action-main:active { transform: scale(0.98); }
+    .btn-action-main:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .btn-action-main.success { background: #059669; box-shadow: 0 4px 16px rgba(5,150,105,0.3); }
+    
+    .btn-steps {
+      display: flex; gap: 6px; align-items: center;
+      font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.65);
+      margin-top: 10px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-steps .step { display: flex; align-items: center; gap: 5px; }
+    .step-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+    .step-sep { color: rgba(255,255,255,0.25); font-size: 10px; }
 
+    /* ── Output ── */
     .output-section { padding: 24px 28px; min-height: 160px; display: flex; flex-direction: column; gap: 18px; }
     .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); padding: 16px 0 8px; }
     .empty-state svg { opacity: 0.35; }
-    .empty-state p { font-size: 13.5px; text-align: center; max-width: 260px; line-height: 1.6; }
+    .empty-state p { font-size: 13.5px; text-align: center; max-width: 240px; line-height: 1.6; }
     .review-box {
       background: var(--blue-light); border: 1.5px solid rgba(59,130,246,0.14);
       border-radius: 16px; padding: 20px 22px; position: relative; display: none;
@@ -96,8 +105,8 @@
     .review-box.visible { display: block; }
     .review-box::before { content: '\201C'; position: absolute; top: -12px; left: 14px; font-size: 68px; font-weight: 800; color: rgba(59,130,246,0.2); line-height: 1; font-family: Georgia, serif; pointer-events: none; }
     #review-text { font-size: 15px; font-weight: 400; font-style: italic; color: var(--text); line-height: 1.78; position: relative; z-index: 1; }
-    .branch-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(59,130,246,0.15); color: var(--blue-hover); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 12px; }
 
+    /* ── Status pills ── */
     .status-row { display: none; gap: 8px; flex-wrap: wrap; }
     .status-row.visible { display: flex; }
     .pill {
@@ -109,17 +118,20 @@
     .pill.done     { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.25); }
     .pill.loading  { background: rgba(59,130,246,0.12); color: var(--blue-hover); border: 1px solid rgba(59,130,246,0.2); }
 
+    /* ── Toast ── */
     #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: #3B82F6; color: #fff; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border-radius: 100px; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; white-space: nowrap; z-index: 999; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
     .footer { margin-top: 22px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.7; }
+
     @media (max-width: 480px) {
       body { padding: 32px 12px 52px; }
-      .top-section, .output-section { padding-left: 18px; padding-right: 18px; }
-      .branch-status .label { display: none; }
+      .branch-strip, .gen-wrap, .output-section { padding-left: 18px; padding-right: 18px; }
     }
   </style>
 </head>
 <body>
+
   <header class="header">
     <div class="brand">
       <div class="logo"><img src="logo.png" alt="RJ Mobile" /></div>
@@ -129,13 +141,37 @@
       </div>
     </div>
     <h1 class="headline">Leave us a <em>review</em></h1>
-    <p class="subline">Tap your branch — your review copies, images download, and the review page opens instantly.</p>
+    <p class="subline">Tap the button — your review copies, 5 photos download, and the review page opens instantly.</p>
   </header>
 
   <div class="card">
-    <div class="top-section">
-      <span class="section-label">Tap your branch</span>
-      <div class="branches" id="branches"></div>
+    <div class="branch-strip">
+      <div class="branch-icon">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="9" r="3" stroke="#3B82F6" stroke-width="1.7"/>
+          <path d="M10 2C6.686 2 4 4.686 4 8c0 4.418 6 10 6 10s6-5.582 6-10c0-3.314-2.686-6-6-6z" stroke="#3B82F6" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="branch-info">
+        <div class="branch-label">Selected Branch</div>
+        <div class="branch-name">Murlipura, 1 Number</div>
+      </div>
+    </div>
+
+    <div class="gen-wrap">
+      <button class="btn-action-main" id="main-btn" onclick="doEverything()">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2.5L12.5 7.5H17.5L13.75 11L15 16L10 13L5 16L6.25 11L2.5 7.5H7.5L10 2.5Z" fill="white" stroke="white" stroke-width="0.3" stroke-linejoin="round"/>
+        </svg>
+        <span id="btn-label">Copy Review &amp; Open Page</span>
+      </button>
+      <div class="btn-steps">
+        <span class="step"><span class="step-dot"></span> Copies text</span>
+        <span class="step-sep">·</span>
+        <span class="step"><span class="step-dot"></span> Downloads 5 photos</span>
+        <span class="step-sep">·</span>
+        <span class="step"><span class="step-dot"></span> Opens page</span>
+      </div>
     </div>
 
     <div class="output-section">
@@ -144,23 +180,21 @@
           <rect x="6" y="8" width="36" height="32" rx="6" stroke="#94A3B8" stroke-width="2"/>
           <path d="M13 18h22M13 24h16M13 30h10" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <p>Tap a branch above — everything happens in one click.</p>
+        <p>Tap the button above — everything happens in one click.</p>
       </div>
+
       <div class="review-box" id="review-box">
         <p id="review-text"></p>
-        <div class="branch-tag">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#3B82F6" stroke-width="1.5"/><circle cx="6" cy="6" r="1.5" fill="#3B82F6"/></svg>
-          <span id="branch-tag-text"></span>
-        </div>
       </div>
-      <div class="status-row" id="status-row">
+
+      <div class="status-row" id="status-row" aria-live="polite">
         <span class="pill" id="pill-copy">
           <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><rect x="4" y="1" width="8" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 3.5H2.5A1.5 1.5 0 0 0 1 5v6.5A1.5 1.5 0 0 0 2.5 13h6A1.5 1.5 0 0 0 10 11.5V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           Review copied
         </span>
         <span class="pill" id="pill-imgs">
           <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="4.5" cy="4.5" r="1" fill="currentColor"/><path d="M1 9.5l3-3 2.5 2.5 2-2 3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          6 images downloading
+          <span id="img-status-text">5 photos downloading</span>
         </span>
         <span class="pill" id="pill-link">
           <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M7.5 2h4.5v4.5M12 2l-6 6M6 3H2.5A1.5 1.5 0 0 0 1 4.5v7A1.5 1.5 0 0 0 2.5 13h7A1.5 1.5 0 0 0 11 11.5V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -171,116 +205,93 @@
   </div>
 
   <p class="footer">Feel free to personalise the review before posting · ⭐⭐⭐⭐⭐</p>
-  <div id="toast"></div>
+  <div id="toast" aria-live="polite"></div>
 
   <script>
-    const BRANCHES = [
-      {
-        id: "1no",
-        name: "Murlipura, 1 Number",
-        link: "https://search.google.com/local/writereview?placeid=ChIJ47_zeYezbTkRcmkoZWMfX_E",
-        imagePrefix: "1no_img",
-        reviews: [
-          "RJ Mobile's Murlipura 1 Number branch has an ultra-luxurious showroom setup. The staff showed wonderful, polite behavior, and they even surprised me with a premium free gift at checkout. Highly recommended!",
-          "Visited the Murlipura 1 Number outlet and the layout is pristine, modern, and elegant. The team was incredibly kind and gentle, and I walked out with a lovely free gift too. A perfect five-star experience.",
-          "The Murlipura 1 Number showroom feels genuinely premium. Everyone on the floor was polite and welcoming, queries were handled patiently, and the complimentary gift was a nice surprise. Easily the best mobile store nearby."
-        ]
-      },
-      {
-        id: "17no",
-        name: "VKI, 17 Number",
-        link: "https://search.google.com/local/writereview?placeid=ChIJa4dK3aGzbTkRA5PDLbAdtxU",
-        imagePrefix: "17no_img",
-        reviews: [
-          "The VKI 17 Number branch of RJ Mobile has a beautifully designed, high-end showroom. The sales team was remarkably polite, and I received a great free gift with my purchase. Definitely my go-to shop now.",
-          "RJ Mobile at VKI 17 Number impressed me with their soft-spoken, professional staff and a spotless, premium store layout. They also handed over some genuinely useful free accessories. Superb experience overall.",
-          "Walking into the VKI 17 Number outlet feels like stepping into a modern luxury store. The employees are respectful and humble, and the free gifts on offer add real value. Highly recommended for anyone nearby."
-        ]
-      },
-      {
-        id: "shastri",
-        name: "Shastri Nagar",
-        link: "https://search.google.com/local/writereview?placeid=ChIJPy_2gv6zbTkRNkLjdwMftK4",
-        imagePrefix: "shastri_img",
-        reviews: [
-          "RJ Mobile's Shastri Nagar branch has a stunning, high-end outlet feel. The staff was disciplined, customer-centric, and the unexpected free gift was a wonderful bonus. Totally satisfied with my visit.",
-          "The Shastri Nagar showroom is magnificent and instantly catches the eye. Everyone on the floor treated me with genuine respect, and the premium free gift made the purchase even sweeter. Must visit if you're upgrading your phone.",
-          "Shopped at the Shastri Nagar RJ Mobile store and loved the premium, comfortable environment. Their cooperative staff made the whole transaction smooth, and the free gifts were handed over with full transparency."
-        ]
-      },
-      {
-        id: "lohamandi",
-        name: "VKI, Lohamandi",
-        link: "https://search.google.com/local/writereview?placeid=ChIJ7wWKoB-zbTkRuoxnfdku9EQ",
-        imagePrefix: "lohamandi_img",
-        reviews: [
-          "The VKI Lohamandi branch offers an unforgettable, elite showroom experience. The team handled all my queries perfectly, and the complimentary gifts they hand out are genuinely top tier. A solid 10 out of 10.",
-          "RJ Mobile Lohamandi has a pristine, elegant, and luxurious layout. The store executives were kind and gentle throughout, and they even surprised me with a premium free gift at checkout. Highly recommend this branch.",
-          "Had a great experience at the Lohamandi outlet — the customer support staff was wonderfully polite, and I walked away with a lovely free gift alongside my new phone. Definitely worth a visit."
-        ]
-      },
-      {
-        id: "6no",
-        name: "Murlipura, 6 Number",
-        link: "https://search.google.com/local/writereview?placeid=ChIJx_8QWWizbTkRlvE7ym_Hy7w",
-        imagePrefix: "6no_img",
-        reviews: [
-          "The Murlipura 6 Number branch of RJ Mobile has an exceptionally premium, luxurious layout. Staff behavior was highly cooperative and friendly, and the complimentary gift added real value. Hands down a great store.",
-          "Visited RJ Mobile at Murlipura 6 Number and the presentation is incredibly high-end and polished. The entire sales team was welcoming, and I didn't expect such a useful free gift with my purchase. Very impressed.",
-          "RJ Mobile's 6 Number outlet in Murlipura feels like a proper luxury tech lounge. The employees were humble and attentive, and the free gifts they offer on upgrades are genuinely high quality. Will be back again."
-        ]
-      }
+    const BRANCH_LINK = "https://search.google.com/local/writereview?placeid=ChIJ47_zeYezbTkRcmkoZWMfX_E";
+    const TOTAL_POOL_IMAGES = 50; 
+    const IMAGES_TO_DOWNLOAD = 5; 
+
+    // Dynamic Review Generator Arrays (10 x 10 x 10 x 5 = 5,000 unique reviews)
+    const intros = [
+      "RJ Mobile has an ultra-luxurious showroom setup.",
+      "The showroom layout is pristine, modern, elegant, and luxurious.",
+      "Walking inside feels like stepping into a modern luxury store.",
+      "They have the most stunning and luxurious outlet in town.",
+      "The environment here is deeply premium, stylish, and comfortable.",
+      "A completely magnificent, luxury store layout that instantly catches your eye.",
+      "The showroom presentation is incredibly high-end and polished.",
+      "It offers an unforgettable elite showroom shopping experience.",
+      "RJ Mobile feels like a high-end luxury tech store lounge.",
+      "The showroom is ultra-luxurious and beautifully designed."
     ];
 
-    const IMAGE_COUNT = 6;
-    let activeId = null;
-    let lastReviewIndex = {};
+    const middles = [
+      "The customer support staff showed wonderful, polite behavior.",
+      "I am very impressed with their soft-spoken and professional behavior.",
+      "The entire sales team has remarkably polite and welcoming behavior.",
+      "The employees treat you with respect and very humble behavior.",
+      "The staff behavior is highly cooperative, patient, and friendly.",
+      "They handled everything with disciplined and customer-centric behavior.",
+      "Excellent treatment and noble behavior from everyone on the floor.",
+      "Their staff's cooperative behavior made my transaction completely smooth.",
+      "The team behaves exceptionally well and handles queries perfectly.",
+      "The store executives have incredibly kind and gentle behavior."
+    ];
 
-    function pickReview(branch) {
-      const reviews = branch.reviews;
-      let idx;
-      do { idx = Math.floor(Math.random() * reviews.length); }
-      while (idx === lastReviewIndex[branch.id] && reviews.length > 1);
-      lastReviewIndex[branch.id] = idx;
-      return reviews[idx];
+    const endings = [
+      "They even surprise you with premium free gifts at checkout.",
+      "Walking out with lovely free gifts made the purchase even sweeter.",
+      "Plus, I received an amazing free gift along with my new smartphone.",
+      "They didn't hold back and gave me highly useful free accessories as gifts.",
+      "They offer genuine and high-quality free gifts on major upgrades.",
+      "Got a fantastic complimentary gift that adds immense value.",
+      "The unexpected high-value free gifts were a wonderful bonus.",
+      "They treat every buyer to delightful premium free gifts.",
+      "They handed over beautiful free gifts with full transparency.",
+      "The complementary free gifts they distribute are top tier."
+    ];
+
+    const bonuses = [
+      "Highly recommended destination!",
+      "A perfect five-star mobile showroom.",
+      "Definitely my go-to mobile shop from now on.",
+      "Simply superb customer journey.",
+      "A class apart from other multi-brand stores."
+    ];
+
+    function pickReview() {
+      const intro = intros[Math.floor(Math.random() * intros.length)];
+      const middle = middles[Math.floor(Math.random() * middles.length)];
+      const ending = endings[Math.floor(Math.random() * endings.length)];
+      const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+      return `${intro} ${middle} ${ending} ${bonus}`;
     }
 
-    function renderBranches() {
-      const wrap = document.getElementById('branches');
-      wrap.innerHTML = '';
-      BRANCHES.forEach(branch => {
-        const btn = document.createElement('button');
-        btn.className = 'branch-btn';
-        btn.id = 'branch-' + branch.id;
-        btn.onclick = () => runBranch(branch);
-        btn.innerHTML = `
-          <span class="branch-dot"></span>
-          <span class="branch-name">${branch.name}</span>
-          <span class="branch-status"><span class="spinner"></span><span class="label">Working…</span></span>
-          <span class="branch-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        `;
-        wrap.appendChild(btn);
-      });
+    // Selects a random subset of photos from img1.png to img50.png
+    function getRandomImages(total, count) {
+      const arr = Array.from({ length: total }, (_, i) => `img${i + 1}.png`);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr.slice(0, count);
     }
 
     function setPill(id, state) {
-      document.getElementById(id).className = 'pill ' + state;
+      const el = document.getElementById(id);
+      el.className = 'pill ' + state;
     }
 
-    async function runBranch(branch) {
-      if (activeId) return; // ignore taps while one is running
-      activeId = branch.id;
-
-      document.querySelectorAll('.branch-btn').forEach(b => {
-        b.classList.remove('active', 'success');
-        b.disabled = true;
-      });
-      const btn = document.getElementById('branch-' + branch.id);
-      btn.classList.add('active');
+    async function doEverything() {
+      const btn = document.getElementById('main-btn');
+      const label = document.getElementById('btn-label');
+      btn.disabled = true;
+      label.textContent = 'Working…';
 
       // 1. Pick & show review instantly
-      const text = pickReview(branch);
-      showReview(text, branch.name);
+      const text = pickReview();
+      showReview(text);
 
       // 2. Show status row
       document.getElementById('status-row').classList.add('visible');
@@ -306,45 +317,52 @@
       }
       setPill('pill-copy', copied ? 'done' : 'pending');
 
-      // 4. Download 6 branch-specific images (staggered so browser doesn't block)
+      // 4. Download random images (staggered)
       setPill('pill-imgs', 'loading');
-      for (let i = 1; i <= IMAGE_COUNT; i++) {
-        const fileName = `${branch.imagePrefix}${i}.png`;
+      const imagesToDownload = getRandomImages(TOTAL_POOL_IMAGES, IMAGES_TO_DOWNLOAD);
+      
+      for (let i = 0; i < imagesToDownload.length; i++) {
         const a = document.createElement('a');
-        a.href = fileName;
-        a.download = fileName;
+        a.href = imagesToDownload[i];
+        a.download = imagesToDownload[i];
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        await wait(300);
+        
+        // Wait 500ms between downloads to prevent browser blocking
+        await wait(500); 
       }
       setPill('pill-imgs', 'done');
 
       // 5. Open review link
       setPill('pill-link', 'loading');
       await wait(400);
-      window.open(branch.link, '_blank', 'noopener,noreferrer');
+      window.open(BRANCH_LINK, '_blank', 'noopener,noreferrer');
       setPill('pill-link', 'done');
 
-      // 6. Mark branch as done and re-enable
-      btn.classList.remove('active');
+      // 6. Reset button
       btn.classList.add('success');
+      label.textContent = '✓ Done! Paste your review & post';
       showToast(copied ? 'Review copied — paste it on the page!' : 'Review shown — copy it manually');
 
       setTimeout(() => {
-        document.querySelectorAll('.branch-btn').forEach(b => { b.disabled = false; });
         btn.classList.remove('success');
-        activeId = null;
-      }, 3000);
+        label.textContent = 'Copy Review & Open Page';
+        btn.disabled = false;
+        
+        // Reset pills for the next customer
+        setTimeout(() => {
+            document.getElementById('status-row').classList.remove('visible');
+        }, 1500);
+      }, 4000);
     }
 
-    function showReview(text, branchName) {
+    function showReview(text) {
       document.getElementById('empty-state').style.display = 'none';
       const box    = document.getElementById('review-box');
       const textEl = document.getElementById('review-text');
       box.classList.add('visible');
       textEl.textContent = text;
-      document.getElementById('branch-tag-text').textContent = branchName;
     }
 
     let toastTimer;
@@ -356,8 +374,6 @@
     }
 
     function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-    renderBranches();
   </script>
 </body>
 </html>
