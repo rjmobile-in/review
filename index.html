@@ -233,7 +233,7 @@
       hi: {
         introsNormal: ["rj mobile bahut badhiya jagah hai","dukan ka interior kafi acha hai","yeh ek shandar mobile shop hai","showroom bahut hi aakarshak hai","store ki saaf safai bahut achi hai","yaha aakar bahut acha laga","yeh ekdum modern store hai","showroom ki lighting bahut premium hai","shopping ka anubhav khas raha","yaha acha collection mil jata hai"],
         introsLoc: ["{loc} me yeh ek shandar shop hai","{loc} me rj mobile bahut badhiya hai","{loc} ki sabse achi dukan hai yeh","agar {loc} me phone lena ho toh best hai","{loc} me inka showroom kafi acha hai","{loc} area me aisi dukan nahi hai","{loc} walo ke liye sabse sahi jagah","{loc} me sabse saste phone yahi milte hain","{loc} me premium collection yahin hai","{loc} ka sabse acha mobile store"],
-        middles: ["staff ka nature bahut acha hai","yaha sabhi bahut madadgar hain","grahak ki baat shanti se sunte hain","mujhe phone ke baare me sab samjhaya","staff ka tarika kafi professional hai","yaha grahako ka samman hota hai","mera purana data transfer kar diya","unka swabhav bahut mitha hai","sahayta ke liye hamesha taiyar rehte hain","customer service sabse aage hai","staff ko achi jankari hai","bhaiya log kafi ache se baat karte hain","yaha apnapan mehsoos hota hai","grahak ko time dete hain","sab log milansar hain"],
+        middles: ["staff ka nature bahut acha hai","yaha sabhi bahut madadgar hain","grahak ki baat shanti se sunte hain","mujhe phone ke baare me sab samjhaya","staff ka tarika kafi professional hai","yaha grahako ka samman hota hai","mera purana data transfer kar diya","unka swabhav bahut mitha hai","sahayta ke hamesha taiyar rehte hain","customer service sabse aage hai","staff ko achi jankari hai","bhaiya log kafi ache se baat karte hain","yaha apnapan mehsoos hota hai","grahak ko time dete hain","sab log milansar hain"],
         pricing: ["kimat kafi sahi mili","online se bhi sasta rate mila","purane phone ki achi kimat di","emi ki suvidha aasan hai","achi chhut mil gayi","paison ke mamle me imandar log hain","budget ke hisab se phone dila diya","bina molbhav ke sahi daam laga diya","koi hidden charge nahi tha","paisa vasool ho gaya yaha","discount bahut acha diya gaya","rate market se kam hi rehte hain","exchange me acha fayda hua","sahi daam me badhiya chij mili","finance jaldi ho gaya"],
         endings: ["sath me free cover bhi mila","billing ke waqt ache gift diye","smartwatch muft me mil gayi","free accessories de kar khush kar diya","inhe gift dene me khushi hoti hai","muft uphar pakar acha laga","earphones bhi free me diye","gift bahut hi kam ke hain","ekdum branded gift diye","customer ko khush karke bhejte hain","bina mange hi gift de diye","muft saman kafi achi quality ka tha","bag bhar kar free gift mile","upar se extra accessories mil gayi","tohfe dekar dil jeet liya"],
         bonuses: ["sabko jana chahiye yaha","meri taraf se puri anumati hai","100% santusht hu","yahin se phone kharidna chahiye","main hamesha yahi aunga","dosto ko bhi bataunga","mera anubhav bahut acha raha","best mobile dukan hai","dil se dhanyawad","10/10 number dunga","paisa vasool anubhav","aage se yahi aunga","sabse behtarin dukan","sabse achi service","maza aa gaya yaha aakar"]
@@ -242,12 +242,6 @@
 
     function humanize(txt) {
       if(Math.random() < 0.4) txt = txt.charAt(0).toLowerCase() + txt.slice(1);
-      if(Math.random() < 0.5) {
-        let emStr = "";
-        let c = Math.random() < 0.5 ? 1 : 2;
-        for(let i=0; i<c; i++) emStr += emojis[Math.floor(Math.random()*emojis.length)];
-        txt += " " + emStr;
-      }
       return txt;
     }
 
@@ -278,7 +272,18 @@
       else { body = parts.slice(0, Math.random() < 0.5 ? 2 : 3); }
 
       let finalArr = [intro, ...body, b];
-      return finalArr.map(humanize).join(" ");
+      let reviewText = finalArr.map(humanize).join(" ");
+      
+      if(Math.random() < 0.40) {
+        let emojiCount = Math.floor(Math.random() * 3) + 1;
+        let emStr = "";
+        for(let i=0; i<emojiCount; i++) {
+          emStr += emojis[Math.floor(Math.random()*emojis.length)];
+        }
+        reviewText += " " + emStr;
+      }
+      
+      return reviewText;
     }
 
     function getRandomImages(total, count) {
